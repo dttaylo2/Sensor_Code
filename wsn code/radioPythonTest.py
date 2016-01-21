@@ -31,7 +31,9 @@ while 1:
 			receive_payload = ""
 			payload = radio.getDynamicPayloadSize();
 			print payload
-			receive_payload = radio.read(5)
+			
+			# We are reading 5 bytes of one value, a colon, and five bytes of another for a total of 11 bytes.
+			receive_payload = radio.read(11)
 
 			print receive_payload
 
