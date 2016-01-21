@@ -7,7 +7,7 @@
 #include <json/json.h>
 using namespace std;
 // Fun comment!
-
+// More explanations for teaching Jeremy.
 RF24 radio(RPI_V2_GPIO_P1_15, RPI_V2_GPIO_P1_24, BCM2835_SPI_SPEED_16MHZ);
 
 const uint8_t pipes[][7] = {"master","slave","idle"};
