@@ -29,7 +29,9 @@ while 1:
 			# Read payload, print it to console, reset listener.
 			# TODO: I copied this code from last semester, not sure why radio needs to be reset. Will look into it.
 			receive_payload = ""
-			receive_payload = radio.read(32)
+			payload = radio.getDynamicPayloadSize();
+			print payload
+			receive_payload = radio.read(5)
 
 			print receive_payload
 
