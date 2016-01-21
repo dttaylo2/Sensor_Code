@@ -1,30 +1,45 @@
+// Libraries
 #include <SoftwareSerial.h>
 #include <Wire.h> // I2C library, required for MLX90614
-#include <SparkFunMLX90614.h> // Temp Sensor : SparkFunMLX90614 Arduino library
+#include <SparkFunMLX90614.h> // Temp sensor library
 #include <SPI.h>
 #include "nRF24L01.h"
 #include "RF24.h"
 
+// Define radio pins
 #define RF_CE 7
 #define RF_CSN 8
-#define SWITCH_PIN 2
 
-// Radio pipe addresses for 2 nodes to communicate.
+// Radio pipe addresses for the 2 nodes to communicate
 const uint64_t pipes[2] = {
   0xF0F0F0F0E1LL,
   0xF0F0F0F0D2LL
 };
 
-const int max_payload_size = 12;
-int val = 0;
+// Data size we are sending
+const int dataSize = 12;
 
-//SoftwareSerial serialComm(0, 1); // RX, TX
+// Create an IRTherm object to interact with
+IRTherm therm;
 
-IRTherm therm; // Create an IRTherm object to interact with throughout
-
+// Start radio
 RF24 radio(RF_CE, RF_CSN);
 
-int inPinI = 1;  //
+// Define values to be read
+double currentSum;
+double currentAverage;
+double temperatureSum;
+double temperatureAverage;
+
+// Read 16 times for average.
+int numDataReads = 16;
+int loopCounter;
+
+// Char array for data to be sent out
+char radioTX[dataSize];
+
+// Values used for reading Irms
+int inPinI = 1;
 int sampleI;
 double filteredI;
 double offsetI = 512; 
@@ -33,160 +48,57 @@ double sumI;
 double ICAL = 11.3;
 double Irms;
 
-//value of port used by sensor
-const int sensor2 = 2;
-const int sensor3 = 3;
-
-
-//raw data buffers
-int rawBuffer0[10];
-int rawBuffer1[10];
-int rawBuffer2[10];
-int rawBuffer3[10];
-
-//real valued buffers
-double realDataBuffer0[10];
-double realDataBuffer1[10];
-float realDataBuffer2[10];
-float realDataBuffer3[10];
-
-double avgVal0;
-double avgVal1;
-float avgVal2;
-float avgVal3;
-
-//char strConv0;
-//char strConv1;
-char out0[5];
-char out1[5];
-char radioTX[12];
-
-String timeStamp;
-
 void setup() {
+  // Start temperature sensor
+  therm.begin();
+  therm.setUnit(TEMP_C);
 
-    
-  // Setup switch input
-  pinMode(SWITCH_PIN, INPUT);
-  digitalWrite(SWITCH_PIN, HIGH);
-  
-//Clear the average values variables
-  avgVal0 = 0;
-  avgVal1 = 0;
-  avgVal2 = 0;
-  avgVal3 = 0;
-  
-
-  //start temp sensor
-  therm.begin(); // Initialize thermal IR sensor
-  therm.setUnit(TEMP_C); // Set the library's units to Celcius with TEMP_C
-
-
-  // Start radio
+  // Start radio with dnamic payloads.
+  // Write to pipe 0, read on pipe 1.
   radio.begin();
-
-  // Enable dynamic payloads
   radio.enableDynamicPayloads();
-
-  // Write to pipe 0
   radio.openWritingPipe(pipes[0]);
-
-  // Read on pipe 1.
   radio.openReadingPipe(1, pipes[1]);
   radio.stopListening();
 
+  // Begin serial
   Serial.begin(9600);
-  while (!Serial) {
-   ; // wait for serial port to connect. Needed for native USB port only
-  }
-
 }
 
 void loop() {
+  // Reset values
+  currentSum = 0.0;
+  temperatureSum = 0.0;
 
-//Collect raw data readings 
- for (int i=0 ; i<10 ; i++){
-
-    //Collect raw data readings 
-      //Call therm.read() to read object and ambient temperatures from the sensor.
-        therm.read();
-      //rawBuffer2[i] = analogRead(sensor2);
-      //rawBuffer3[i] = analogRead(sensor3);
-     delay(50);
-//Converted raw data
-    realDataBuffer0[i] = calcIrms(1480);  // Calculate Irms
-    realDataBuffer1[i] = therm.object();
-//  realDataBuffer2[i] = rawBuffer2[i] * (5.0 / 1023.0);  // Convert the analog reading (which goes from 0 - 1023) to a voltage (0 - 5V);
-//  realDataBuffer3[i] = rawBuffer3[i] * (5.0 / 1023.0);  // Convert the analog reading (which goes from 0 - 1023) to a voltage (0 - 5V);
-delay(50);
-}
-
-avgVal0 = 0;
-avgVal1 = 0;
-
-//Get average values from buffers
-for (int j=0 ; j<10 ; j++){
-  avgVal0 = avgVal0 + realDataBuffer0[j];
-
-}
-
-  avgVal0 = avgVal0 / 10;
-
-for (int j=0 ; j<10 ; j++){
-  avgVal1 = avgVal1 + realDataBuffer1[j];
-}
-  avgVal1 = avgVal1 / 10;
-
-/*
-for (int j=0 ; j<10 ; j++){
-  avgVal2 = avgVal2 + realDataBuffer2[j];
-}
-
-for (int j=0 ; j<10 ; j++){
-  avgVal3 = avgVal3 + realDataBuffer3[j];
-}*/
-
-
-
-
-
-/*
-dtostrf(avgVal0 , 6 , 2 ,out0);
-dtostrf(avgVal1 , 6 , 2 ,out1);
-
-
-for (int i = 0; i<6 ; i++){
-  radioTX[i] = out0[i];
-  Serial.println(out0[i]);
-}
-
-radioTX[6] = ',';
-
-for (int j = 7; j<12 ; j++){
-  radioTX[j] = out1[j];
-}*/
-dtostrf(avgVal0, 4, 2, &radioTX[0]);
-radioTX[6] = ',';
-dtostrf(avgVal1, 5, 2, &radioTX[7]);
-
-   
-//transmit data to RasPi
-radio.write(&radioTX, max_payload_size);
-
-  Serial.println(avgVal0);  //current
-  Serial.println(avgVal1);  //temp
-  
-  for (int i =0; i<12 ; i++){
-    
-  Serial.print(radioTX[i]);
-  
+  for(loopCounter = 0; loopCounter < numDataReads; loopCounter++) {
+    // Call therm.read() to read object and ambient temperatures from the sensor.
+    therm.read();
+    // Wait 50 ms
+    delay(50);
+    // Convert data
+    currentSum += calcIrms(1480);
+    temperatureSum += therm.object();
+    // Wait 50 ms
+    delay(50);
   }
-    Serial.println("");
-    
-    delay(2000);
-    
-  //serialComm.write(avgVal2);  //vibration
-  //serialComm.write(avgVal3);  //speed
+
+  // Get values
+  currentAverage = currentSum / numDataReads;
+  temperatureAverage = temperatureSum / numDataReads;
+
+  // Populate them.
+  // Use four bytes to display current to a 2 decimal place precision.
+  dtostrf(currentAverage, 4, 2, &radioTX[0]);
+  // Put a comma after current
+  radioTX[6] = ',';
+  // Use five bytes with 2 decimal places for temperature
+  dtostrf(temperatureAverage, 5, 2, &radioTX[7]);
+
+  // Transmit data
+  radio.write(&radioTX, dataSize);
+
+  // Delay
+  delay(2000);
 }
 
 //-----------------------------------------------------------------
