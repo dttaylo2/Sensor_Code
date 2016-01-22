@@ -3,6 +3,8 @@ import os, subprocess, sys, signal
 import time
 from RF24 import *
 from datetime import datetime, tzinfo, timedelta
+import MySQLdb
+import struct
 
 # Variables
 currentIndex = 0
@@ -16,7 +18,15 @@ def printDetails(data):
 	parts = data.split(',')
 	print "Current: " + parts[currentIndex] + "A"
 	print "Temperature: " + parts[temperatureIndex] + "C"
-
+	
+	# Insert into DB
+	sql = "INSERT INTO sensorData (currentVal, temperatureVal, vibrationVal, rpmVal) VALUES (%s, %s, %s, %s)"
+	cursor.execute(sql, (parts[currentIndex], parts[temperatureIndex], 0, 0))
+	db.commit()
+	
+# Connect
+db = MySQLdb.connect("localhost", "root", "AdamPi331", "seniordesign")
+cursor = db.cursor()
 
 # Setup for GPI 22 CE and CE0 CSN with SPI Speed @ 4Mhz
 radio = RF24(RPI_V2_GPIO_P1_15, BCM2835_SPI_CS0, BCM2835_SPI_SPEED_4MHZ)
@@ -44,5 +54,5 @@ while 1:
 			printDetails(radio.read(dataSize))
 
 			# TODO: I copied this code from last semester, not sure why radio needs to be reset. Will look into it.
-			radio.stopListening()
-			radio.startListening()
+			# radio.stopListening()
+			# radio.startListening()
