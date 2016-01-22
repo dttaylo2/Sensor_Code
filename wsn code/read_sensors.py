@@ -18,10 +18,11 @@ def printDetails(data):
 	parts = data.split(',')
 	print "Current: " + parts[currentIndex] + "A"
 	print "Temperature: " + parts[temperatureIndex] + "C"
+	print "Vibration: " + parts[vibrationIndex] + "Hz"
 	
 	# Insert into DB
 	sql = "INSERT INTO sensorData (currentVal, temperatureVal, vibrationVal, rpmVal) VALUES (%s, %s, %s, %s)"
-	cursor.execute(sql, (parts[currentIndex], parts[temperatureIndex], 0, 0))
+	cursor.execute(sql, (parts[currentIndex], parts[temperatureIndex], parts[vibrationIndex], 0))
 	db.commit()
 	
 # Connect
