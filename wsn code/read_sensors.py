@@ -7,6 +7,7 @@ import MySQLdb
 import struct
 
 # Variables
+# Testing commit update
 currentIndex = 0
 temperatureIndex = 1
 vibrationIndex = 2
