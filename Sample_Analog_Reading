@@ -1,0 +1,41 @@
+//Make sure the port the arduino is assigned to in the IDE matches correctly.
+
+const int analogIn = 0;   //used to select which pin to read from
+
+int rawBuffer[10];
+float voltageBuffer[10];
+
+
+void setup() {
+  // initialize serial communication at 9600 bits per second:
+  Serial.begin(9600);
+}
+
+void loop() {
+  
+//this loop takes 10 raw data readings and stores them in buffer
+  for (int i = 0; i<10 ;i ++){
+    rawBuffer[i] = analogRead(analogIn);
+    voltageBuffer[i] = rawBuffer[i] * (5.0 / 1023.0);  // Convert the analog reading (which goes from 0 - 1023) to a voltage (0 - 5V):
+  }
+
+//this loop prints the stored raw data readings
+  for (int j = 0; j<10 ; j++){
+    Serial.print(rawBuffer[j]);
+    Serial.print(", ");
+    delay(100);
+  }
+  
+  Serial.println("");   //new line for next print sequence
+  delay(3000);
+
+//this loop prints the stored converted data readings
+  for (int k = 0; k<10 ; k++){
+    Serial.print(voltageBuffer[k]);
+    Serial.print("V, ");
+    delay(100);
+  }
+  
+ Serial.println("");    //new line for next print sequence
+  delay(3000);
+}
