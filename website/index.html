@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+	<head>
+        <!--Import Google Icon Font-->
+        <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <!--Import materialize.css-->
+        <link type="text/css" rel="stylesheet" href="css/materialize.css"  media="screen,projection"/>
+
+        <!--Let browser know website is optimized for mobile-->
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+        <!-- Icon package -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+
+        <!--Import jQuery before materialize.js-->
+        <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+        <script type="text/javascript" src="js/materialize.js"></script>
+
+        <!-- My CSS -->
+        <link href="css/style.css" media="all" rel="stylesheet" type="text/css"/>
+    </head>
+    <body>
+        <nav class="blue darken-2 lighten-1" role="navigation">
+            <div class="nav-wrapper container">
+                <a href="index.html" class="brand-logo center">Machine Tool Diagnostics</a>
+                <ul id="slide-out" class="side-nav" style="color: black;">
+                    <li><h3 class="center" style="color: black;">History</h3></li>
+                    <li><p>February 5, 2016</li>
+                    <li><p>February 4, 2016</li>
+                    <li><p>February 3, 2016</li>
+                    <li><p>February 2, 2016</li>
+                    <li><p>February 1, 2016</li>
+                </ul>
+                <a href="#" data-activates="slide-out" class="button-collapse show-on-large"><i class="mdi-navigation-menu"></i></a>
+            </div>
+        </nav>
+        <!-- Whole container under header -->
+        <div class="container">
+            <!-- First row is only row. -->
+            <div class="row">
+                <!-- Have report data div take up whole space for now. -->
+                <!-- TODO: Add history div. -->
+                <div class="col s12">
+                    <div class="center"><h5>Machine Tool Data For February 4, 2016.</h5></div>
+                    <div class="center">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th data-field="time">Time</th>
+                                <th data-field="vibration">Vibration</th>
+                                <th data-field="temperature">Temperature</th>
+                                <th data-field="current">Current</th>
+                                <th data-field="speed">Speed</th>
+                                <th data-field="classification">Classification</th>
+                            </tr>
+                            <tbody>
+                                <tr>
+                                    <td>01:00 am</td>
+                                    <td>Normal</td>
+                                    <td>Normal</td>
+                                    <td>Normal</td>
+                                    <td>Normal</td>
+                                    <td>Working</td>
+                                </tr>
+                                <tr>
+                                    <td>02:00 am</td>
+                                    <td>Normal</td>
+                                    <td>Normal</td>
+                                    <td>Normal</td>
+                                    <td>Normal</td>
+                                    <td>Working</td>
+                                </tr>
+                                <tr>
+                                    <td>02:00 am</td>
+                                    <td>Normal</td>
+                                    <td>Normal</td>
+                                    <td>Normal</td>
+                                    <td>Normal</td>
+                                    <td>Working</td>
+                                </tr>
+                            </tbody>
+                        </thead>
+                    </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+    <script type="text/javascript" src="js/helper.js"></script>
+</html>
