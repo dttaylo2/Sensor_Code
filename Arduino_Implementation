@@ -1,6 +1,6 @@
 #include <SoftwareSerial.h>
-#include <Adafruit_MLX90614.h>
-#include <EmonLib.h>
+#include <Adafruit_MLX90614.h> //temp sensor
+#include <EmonLib.h>    //current sensor
 
 SoftwareSerial serialComm(0, 1); // RX, TX
 EnergyMonitor emon1; 
