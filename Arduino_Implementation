@@ -3,6 +3,8 @@
 #include <EmonLib.h>
 
 SoftwareSerial serialComm(0, 1); // RX, TX
+EnergyMonitor emon1; 
+
 
 //value of port used by sensor
 const int sensor0 = 0; 
@@ -27,6 +29,7 @@ String timeStamp;
 
 void setup() {
 
+  emon1.current(1, 111.1);             // Current: input pin, calibration.
   Serial.begin(9600);
     while (!Serial) {
     ; // wait for serial port to connect. Needed for native USB port only
