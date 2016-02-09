@@ -115,24 +115,12 @@ Serial.print(realData2);
    
 //transmit data to RasPi
 /*
-  serialComm.print(realDataBuffer0);
-  serialComm.write(realDataBuffer1);
-  serialComm.write(realDataBuffer2);
-  serialComm.write(realDataBuffer3);
+  serialComm.print(avgVal0);
+  serialComm.write(avgVal1);
+  serialComm.write(avgVal2);
+  serialComm.write(avgVal3);
   
   timeStamp = getTimeStamp();
   serialComm.print(timeStamp);
   */
 }
-
-
-
-//get time value from RasPi
-/*
-void getTimeStamp(){
-  
-  return time0;
-}*/
-
-
-
