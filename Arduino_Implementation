@@ -14,20 +14,30 @@ const int sensor3 = 3;
 
 
 //raw data buffers
-int rawBuffer0;
-int rawBuffer1;
-int rawBuffer2;
-int rawBuffer3;
+int rawBuffer0[10];
+int rawBuffer1[10];
+int rawBuffer2[10];
+int rawBuffer3[10];
 
 //real valued buffers
-float realData0;
-float realData1;
-float realData2;
-float realData3;
+float realDataBuffer0[10];
+float realDataBuffer1[10];
+float realDataBuffer2[10];
+float realDataBuffer3[10];
+
+float avgVal0;
+float avgVal1;
+float avgVal2;
+float avgVal3;
 
 String timeStamp;
 
 void setup() {
+  
+  avgVal0 = 0;
+  avgVal1 = 0;
+  avgVal2 = 0;
+  avgVal3 = 0;
 
   emon1.current(1, 111.1);             // Current: input pin, calibration.
   Serial.begin(9600);
@@ -40,21 +50,39 @@ void setup() {
 void loop() {
 
 //Collect raw data readings 
+ for (int i=0 ; i<10 ; i++){
+//  rawBuffer0[i] = analogRead(sensor0);
+//  rawBuffer1[i] = analogRead(sensor1);
+//  rawBuffer2[i] = analogRead(sensor2);
+ // rawBuffer3[i] = analogRead(sensor3);
  
-//  rawBuffer0 = analogRead(sensor0);
-//  rawBuffer1 = analogRead(sensor1);
-//  rawBuffer2 = analogRead(sensor2);
- // rawBuffer3 = analogRead(sensor3);
-
-
-
 //Convert raw data into real data.
 //Default conversion gives real voltage readng. Conversion must be changed for individual sensor type.
+//  realDataBuffer0[i] = rawBuffer0[i] * (5.0 / 1023.0);  // Convert the analog reading (which goes from 0 - 1023) to a voltage (0 - 5V);
+//  realData1Buffer[i] = rawBuffer1[i] * (5.0 / 1023.0);  // Convert the analog reading (which goes from 0 - 1023) to a voltage (0 - 5V);
+//  realData2Buffer[i] = rawBuffer2[i] * (5.0 / 1023.0);  // Convert the analog reading (which goes from 0 - 1023) to a voltage (0 - 5V);
+//  realData3Buffer[i] = rawBuffer3[i] * (5.0 / 1023.0);  // Convert the analog reading (which goes from 0 - 1023) to a voltage (0 - 5V);
 
-//  realData0 = rawBuffer0 * (5.0 / 1023.0);  // Convert the analog reading (which goes from 0 - 1023) to a voltage (0 - 5V);
-//  realData1 = rawBuffer1 * (5.0 / 1023.0);  // Convert the analog reading (which goes from 0 - 1023) to a voltage (0 - 5V);
-//  realData2 = rawBuffer2 * (5.0 / 1023.0);  // Convert the analog reading (which goes from 0 - 1023) to a voltage (0 - 5V);
-//  realData3 = rawBuffer3 * (5.0 / 1023.0);  // Convert the analog reading (which goes from 0 - 1023) to a voltage (0 - 5V);
+}
+
+
+
+//Get average values from buffers
+for (int j=0 ; j<10 ; j++){
+  avgVal0 = avgVal0 + realDataBuffer0[j];
+}
+
+for (int j=0 ; j<10 ; j++){
+  avgVal1 = avgVal1 + realDataBuffer1[j];
+}
+
+for (int j=0 ; j<10 ; j++){
+  avgVal2 = avgVal2 + realDataBuffer2[j];
+}
+
+for (int j=0 ; j<10 ; j++){
+  avgVal3 = avgVal3 + realDataBuffer3[j];
+}
 
 
 //Print data to serial monitor for testing purposes
@@ -87,10 +115,10 @@ Serial.print(realData2);
    
 //transmit data to RasPi
 /*
-  serialComm.print(realData0);
-  serialComm.write(realData1);
-  serialComm.write(realData2);
-  serialComm.write(realData3);
+  serialComm.print(realDataBuffer0);
+  serialComm.write(realDataBuffer1);
+  serialComm.write(realDataBuffer2);
+  serialComm.write(realDataBuffer3);
   
   timeStamp = getTimeStamp();
   serialComm.print(timeStamp);
