@@ -7,7 +7,7 @@ EnergyMonitor emon1;
 
 
 //value of port used by sensor
-const int sensor0 = 0; 
+const int sensor0 = 0;  //current sensor
 const int sensor1 = 1;
 const int sensor2 = 2;
 const int sensor3 = 3;
@@ -51,7 +51,7 @@ void loop() {
 
 //Collect raw data readings 
  for (int i=0 ; i<10 ; i++){
-//  rawBuffer0[i] = analogRead(sensor0);
+//  rawBuffer0[i] = analogRead(emon1.calcIrms(1480);  // Calculate Irms only);
 //  rawBuffer1[i] = analogRead(sensor1);
 //  rawBuffer2[i] = analogRead(sensor2);
  // rawBuffer3[i] = analogRead(sensor3);
