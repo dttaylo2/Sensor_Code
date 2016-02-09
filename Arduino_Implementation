@@ -4,6 +4,7 @@
 
 SoftwareSerial serialComm(0, 1); // RX, TX
 EnergyMonitor emon1; 
+Adafruit_MLX90614 mlx = Adafruit_MLX90614();
 
 
 //value of port used by sensor
