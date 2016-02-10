@@ -1,11 +1,12 @@
 #include <SoftwareSerial.h>
-#include <Adafruit_MLX90614.h> //temp sensor
+#include <Wire.h> // I2C library, required for MLX90614
+#include <SparkFunMLX90614.h> // Temp Sensor : SparkFunMLX90614 Arduino library
 #include <EmonLib.h>    //current sensor
 
 SoftwareSerial serialComm(0, 1); // RX, TX
 EnergyMonitor emon1; 
-Adafruit_MLX90614 mlx = Adafruit_MLX90614();
 
+IRTherm therm; // Create an IRTherm object to interact with throughout
 
 //value of port used by sensor
 const int sensor0 = 0;  //current sensor
@@ -39,6 +40,9 @@ void setup() {
   avgVal1 = 0;
   avgVal2 = 0;
   avgVal3 = 0;
+  
+  therm.begin(); // Initialize thermal IR sensor
+  therm.setUnit(TEMP_C); // Set the library's units to Celcius with TEMP_C
 
   emon1.current(1, 111.1);             // Current: input pin, calibration.
   Serial.begin(9600);
@@ -52,15 +56,18 @@ void loop() {
 
 //Collect raw data readings 
  for (int i=0 ; i<10 ; i++){
+ 
 //  rawBuffer0[i] = analogRead(emon1.calcIrms(1480);  // Calculate Irms only);
-//  rawBuffer1[i] = analogRead(sensor1);
+
+  // Call therm.read() to read object and ambient temperatures from the sensor.
+    therm.read();
 //  rawBuffer2[i] = analogRead(sensor2);
  // rawBuffer3[i] = analogRead(sensor3);
  
 //Convert raw data into real data.
 //Default conversion gives real voltage readng. Conversion must be changed for individual sensor type.
 //  realDataBuffer0[i] = rawBuffer0[i] * (5.0 / 1023.0);  // Convert the analog reading (which goes from 0 - 1023) to a voltage (0 - 5V);
-//  realData1Buffer[i] = rawBuffer1[i] * (5.0 / 1023.0);  // Convert the analog reading (which goes from 0 - 1023) to a voltage (0 - 5V);
+//  realData1Buffer[i] = therm.object();
 //  realData2Buffer[i] = rawBuffer2[i] * (5.0 / 1023.0);  // Convert the analog reading (which goes from 0 - 1023) to a voltage (0 - 5V);
 //  realData3Buffer[i] = rawBuffer3[i] * (5.0 / 1023.0);  // Convert the analog reading (which goes from 0 - 1023) to a voltage (0 - 5V);
 
