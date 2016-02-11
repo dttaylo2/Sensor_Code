@@ -2,10 +2,6 @@
 Removed EmonLib, added only needed functions "calcIrms" and "readVcc" from the library
 Added debug with LCD
 */
-#include <Wire.h>
-#include <LiquidCrystal_I2C.h>
-LiquidCrystal_I2C lcd(0x27,20,4);  // set the LCD address to 0x27, 20x4 LCD
-
 //#define DEBUG   // Uncomment for LCD debug
 
 int inPinI = 1;
@@ -14,8 +10,10 @@ double filteredI;
 double offsetI = 512; 
 double sqI;
 double sumI;
-double ICAL = 62.1;
+double ICAL = 11.3;
 double Irms;
+double Iavg;
+double I;
 
 void setup()
 {  
@@ -40,7 +38,7 @@ void loop()
    
   Serial.print("Irms: "); 
   Serial.println(Irms);
-  Serial.print("Iavg: ");		       // Irms
+  Serial.print("Iavg: ");           // Irms
   Serial.println(Iavg);
   
   #ifdef DEBUG
@@ -61,9 +59,9 @@ double calcIrms(unsigned int Number_of_Samples)
     sampleI = analogRead(inPinI);
 
     // Digital low pass filter extracts the 2.5 V or 1.65 V dc offset, 
-	//  then subtract this - signal is now centered on 0 counts.
+  //  then subtract this - signal is now centered on 0 counts.
     offsetI = (offsetI + (sampleI-offsetI)/1024);
-	filteredI = sampleI - offsetI;
+  filteredI = sampleI - offsetI;
 
     // Root-mean-square method current
     // 1) square current values
