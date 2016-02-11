@@ -30,7 +30,7 @@ while 1:
 			# TODO: I copied this code from last semester, not sure why radio needs to be reset. Will look into it.
 			receive_payload = ""
 			payload = radio.getDynamicPayloadSize()
-			receive_payload = radio.read(5)
+			receive_payload = radio.read(15)
 
 			print receive_payload
 
