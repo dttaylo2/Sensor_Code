@@ -29,8 +29,19 @@ void setup()
 
 void loop()
 {
+  Iavg = 0;
+  I = 0;
   Irms = calcIrms(1480);  // Calculate Irms only
-  Serial.println(Irms);		       // Irms
+  for(int i = 0; i < 16; i ++){
+   I += Irms;
+   }
+   
+   Iavg = I / 16;
+   
+  Serial.print("Irms: "); 
+  Serial.println(Irms);
+  Serial.print("Iavg: ");		       // Irms
+  Serial.println(Iavg);
   
   #ifdef DEBUG
   lcd.setCursor(0,0);
