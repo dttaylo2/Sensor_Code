@@ -4,6 +4,20 @@ import time
 from RF24 import *
 from datetime import datetime, tzinfo, timedelta
 
+# Variables
+currentIndex = 0
+temperatureIndex = 1
+vibrationIndex = 2
+
+# We are reading 5 bytes of one value, a comma, and five bytes of another for a total of 11 bytes.
+dataSize = 11
+
+def printDetails(data):
+	parts = data.split(',')
+	print "Current: " + parts[currentIndex] + "A"
+	print "Temperature: " + parts[temperatureIndex] + "C"
+
+
 # Setup for GPI 22 CE and CE0 CSN with SPI Speed @ 4Mhz
 radio = RF24(RPI_V2_GPIO_P1_15, BCM2835_SPI_CS0, BCM2835_SPI_SPEED_4MHZ)
 
@@ -26,17 +40,9 @@ while 1:
 	if radio.available():
 		# While the radio is still available, read from it.
 		while(radio.available()):
-			# Read payload, print it to console, reset listener.
-			# TODO: I copied this code from last semester, not sure why radio needs to be reset. Will look into it.
-			receive_payload = ""
-			payload = radio.getDynamicPayloadSize();
-			print payload
-			
-			# We are reading 5 bytes of one value, a colon, and five bytes of another for a total of 11 bytes.
-			receive_payload = radio.read(11)
-			parts = receive_payload.split(',')
-			print "Current: " + parts[0] + "A"
-			print "Temp: " + parts[1] + "C"
+			# Print values to console.
+			printDetails(radio.read(dataSize))
 
+			# TODO: I copied this code from last semester, not sure why radio needs to be reset. Will look into it.
 			radio.stopListening()
 			radio.startListening()
