@@ -34,8 +34,9 @@ while 1:
 			
 			# We are reading 5 bytes of one value, a colon, and five bytes of another for a total of 11 bytes.
 			receive_payload = radio.read(11)
-
-			print receive_payload
+			parts = receive_payload.split(',')
+			print "Current: " + parts[0] + "A"
+			print "Temp: " + parts[1] + "C"
 
 			radio.stopListening()
 			radio.startListening()
