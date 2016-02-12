@@ -51,8 +51,8 @@ void loop()
   if (therm.read()) // On success, read() will return 1, on fail 0.
   {
     // Use the object() and ambient() functions to grab the object and ambient
-	// temperatures.
-	// They'll be floats, calculated out to the unit you set with setUnit().
+  // temperatures.
+  // They'll be floats, calculated out to the unit you set with setUnit().
     Serial.print("Object: " + String(therm.object(), 2));
     Serial.write('°'); // Degree Symbol
     Serial.println("F");
@@ -72,3 +72,4 @@ void setLED(bool on)
   else
     digitalWrite(LED_PIN, HIGH);
 }
+
