@@ -10,6 +10,9 @@
 #define RF_CE 7
 #define RF_CSN 8
 
+const int sensorPin = A0;
+const float baselineVibe = 0;
+
 // Radio pipe addresses for the 2 nodes to communicate
 const uint64_t pipes[2] = {
   0xF0F0F0F0E1LL,
@@ -17,7 +20,7 @@ const uint64_t pipes[2] = {
 };
 
 // Data size we are sending
-const int dataSize = 12;
+const int dataSize = 18;
 
 // Create an IRTherm object to interact with
 IRTherm therm;
@@ -30,6 +33,8 @@ double currentSum;
 double currentAverage;
 double temperatureSum;
 double temperatureAverage;
+double vibrationSum;
+double vibrationAverage;
 
 // Read 16 times for average.
 int numDataReads = 8;
@@ -47,6 +52,8 @@ double sqI;
 double sumI;
 double ICAL = 11.3;
 double Irms;
+
+double Hz;
 
 void setup() {
   // Start temperature sensor
@@ -69,6 +76,7 @@ void loop() {
   // Reset values
   currentSum = 0.0;
   temperatureSum = 0.0;
+  vibrationSum = 0.0;
 
   for(loopCounter = 0; loopCounter < numDataReads; loopCounter++) {
     // Call therm.read() to read object and ambient temperatures from the sensor.
@@ -78,13 +86,17 @@ void loop() {
     // Convert data
     currentSum += calcIrms(1480);
     temperatureSum += therm.object();
+    vibrationSum += (analogRead(sensorPin)) * 0.175;
     // Wait 50 ms
     // delay(50);
+
+    
   }
 
   // Get values
   currentAverage = currentSum / numDataReads;
   temperatureAverage = temperatureSum / numDataReads;
+  vibrationAverage = vibrationSum / numDataReads;
 
   // Populate them.
   // Use four bytes to display current to a 2 decimal place precision.
@@ -93,6 +105,10 @@ void loop() {
   radioTX[6] = ',';
   // Use five bytes with 2 decimal places for temperature
   dtostrf(temperatureAverage, 5, 2, &radioTX[7]);
+  
+  radioTX[13] = ',';
+  
+  dtostrf(vibrationAverage, 5, 2 , &radioTX[14]);
 
   // Transmit data
   radio.write(&radioTX, dataSize);
