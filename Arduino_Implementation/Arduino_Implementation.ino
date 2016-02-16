@@ -100,15 +100,15 @@ void loop() {
 
   // Populate them.
   // Use four bytes to display current to a 2 decimal place precision.
-  dtostrf(currentAverage, 4, 2, &radioTX[0]);
+  dtostrf(currentAverage, 5, 2, &radioTX[0]);
   // Put a comma after current
   radioTX[6] = ',';
   // Use five bytes with 2 decimal places for temperature
   dtostrf(temperatureAverage, 5, 2, &radioTX[7]);
   
-  radioTX[13] = ',';
+  radioTX[12] = ',';
   
-  dtostrf(vibrationAverage, 5, 2 , &radioTX[14]);
+  dtostrf(vibrationAverage, 5, 2 , &radioTX[13]);
 
   // Transmit data
   radio.write(&radioTX, dataSize);
