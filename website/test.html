@@ -1,28 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+table, th, td {
+     border: 1px solid black;
+}
+</style>
+</head>
+<body>
+
 <?php
-$con=mysqli_connect("localhost","root","AdamPi331","seniordesign");
+$servername = "localhost";
+$username = "root";
+$password = "AdamPi331";
+$dbname = "seniordesign";
 
+// Create connection
+$conn = new mysqli($servername, $username, $password, $dbname);
 // Check connection
-if (mysqli_connect_errno())
-{
-echo "Failed to connect to MySQL: " . mysqli_connect_error();
+if ($conn->connect_error) {
+     die("Connection failed: " . $conn->connect_error);
+} 
+
+$sql = "SELECT id, currentVal FROM sensorData";
+$result = $conn->query($sql);
+
+if ($result->num_rows > 0) {
+     echo "<table><tr><th>ID</th><th>Current</th></tr>";
+     // output data of each row
+     while($row = $result->fetch_assoc()) {
+         echo "<tr><td>" . $row["id"]. "</td><td>" . $row["currentVal"]."</td></tr>";
+     }
+     echo "</table>";
+} else {
+     echo "0 results";
 }
 
-$result = mysqli_query($con, "SELECT * FROM sensorData");
+$conn->close();
+?>  
 
-echo "<table border='1'>
-<tr>
-<th>id</th>
-<th>Current</th>
-</tr>";
-
-while($row = mysqli_fetch_array($result))
-{
-echo "<tr>";
-echo "<td>" . $row['id'] . "</td>";
-echo "<td>" . $row['currentVal'] . "</td>";
-echo "</tr>";
-}
-echo "</table>";
-
-mysqli_close($con);
-?>
+</body>
+</html>
