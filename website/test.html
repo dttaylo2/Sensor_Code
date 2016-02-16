@@ -1,5 +1,6 @@
 <?php
 $con=mysqli_connect("localhost","root","AdamPi331","seniordesign");
+
 // Check connection
 if (mysqli_connect_errno())
 {
@@ -10,8 +11,8 @@ $result = mysqli_query($con, "SELECT * FROM sensorData");
 
 echo "<table border='1'>
 <tr>
-<th>Firstname</th>
-<th>Lastname</th>
+<th>id</th>
+<th>Current</th>
 </tr>";
 
 while($row = mysqli_fetch_array($result))
