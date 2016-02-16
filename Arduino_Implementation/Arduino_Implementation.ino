@@ -32,7 +32,7 @@ double temperatureSum;
 double temperatureAverage;
 
 // Read 16 times for average.
-int numDataReads = 16;
+int numDataReads = 8;
 int loopCounter;
 
 // Char array for data to be sent out
@@ -74,12 +74,12 @@ void loop() {
     // Call therm.read() to read object and ambient temperatures from the sensor.
     therm.read();
     // Wait 50 ms
-    delay(50);
+    // delay(50);
     // Convert data
     currentSum += calcIrms(1480);
     temperatureSum += therm.object();
     // Wait 50 ms
-    delay(50);
+    // delay(50);
   }
 
   // Get values
@@ -98,7 +98,7 @@ void loop() {
   radio.write(&radioTX, dataSize);
 
   // Delay
-  delay(2000);
+  delay(100);
 }
 
 //-----------------------------------------------------------------
