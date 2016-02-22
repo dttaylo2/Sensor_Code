@@ -58,7 +58,7 @@ radio.openReadingPipe(1, pipes[0])
 radio.openReadingPipe(2, pipes[2])
 radio.startListening()
 
-file = open('tool2ex4.txt', 'wa')
+file = open('good_bearing_dull_blade.txt', 'wa')
 
 # Always listening
 while 1:
