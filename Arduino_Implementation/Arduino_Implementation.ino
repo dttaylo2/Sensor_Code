@@ -3,9 +3,20 @@
 #include <Wire.h> // I2C library, required for MLX90614
 #include <SparkFunMLX90614.h> // Temp sensor library
 #include <SPI.h>
+#include <TimerOne.h>
 #include "nRF24L01.h"
 #include "RF24.h"
 
+// Timer
+const byte M_TICK = 2;
+const int DEBOUNCE_DELAY = 10;
+volatile const long TIMER_PER_uS = 1000000;
+const unsigned int PULSE_REV = 8;
+volatile int tickCounter = 0;
+volatile int rpmArray[5] = {0};
+volatile int index = 0;
+volatile unsigned long time = 100;
+volatile unsigned long rpm = 0;
 // Define radio pins
 #define RF_CE 7
 #define RF_CSN 8
@@ -20,7 +31,7 @@ const uint64_t pipes[2] = {
 };
 
 // Data size we are sending
-const int dataSize = 18;
+const int dataSize = 24;
 
 // Create an IRTherm object to interact with
 IRTherm therm;
@@ -56,6 +67,7 @@ double Irms;
 double Hz;
 
 void setup() {
+  
   // Start temperature sensor
   therm.begin();
   therm.setUnit(TEMP_C);
@@ -70,15 +82,24 @@ void setup() {
 
   // Begin serial
   Serial.begin(9600);
+  
+  attachInterrupt(0, motorTick, RISING);
+  Timer1.initialize(TIMER_PER_uS);
+  Timer1.attachInterrupt(computeRPM);
 }
 
 void loop() {
+
+  
   // Reset values
   currentSum = 0.0;
   temperatureSum = 0.0;
   vibrationSum = 0.0;
 
   for(loopCounter = 0; loopCounter < numDataReads; loopCounter++) {
+
+
+    
     // Call therm.read() to read object and ambient temperatures from the sensor.
     therm.read();
     // Wait 50 ms
@@ -89,8 +110,7 @@ void loop() {
     vibrationSum += (analogRead(sensorPin)) * 0.175;
     // Wait 50 ms
     // delay(50);
-
-    
+   
   }
 
   // Get values
@@ -110,8 +130,16 @@ void loop() {
   
   dtostrf(vibrationAverage, 5, 2 , &radioTX[13]);
 
-  // Transmit data
+  radioTX[18] = ',';
+
+
+  dtostrf(rpm, 5, 0 , &radioTX[19]);
+  
+  //Transmit data
   radio.write(&radioTX, dataSize);
+
+  //Serial.write(radioTX, dataSize);
+  //Serial.println();
 
   // Delay
   delay(100);
@@ -175,5 +203,56 @@ long readVcc() {
   result = 1125300L / result; // Calculate Vcc (in mV); 1125300 = 1.1*1023*1000
   return result; // Vcc in millivolts
 }
-
+  
 //-----------------------------------------------------------------
+void motorTick()
+{
+  if ((micros() - time) < DEBOUNCE_DELAY)
+    return;
+
+  for (int k = 0; k < 3; ++k)
+    if (digitalRead(M_TICK) != HIGH)
+      return;
+  
+  ++tickCounter;
+
+  time = micros();
+}
+
+void computeRPM()
+{
+  switch (index)
+  {
+    case 0:
+      rpmArray[0] = tickCounter * (TIMER_PER_uS / 1000000.) * (60. / PULSE_REV);
+      ++index;
+    break;
+    
+    case 1:
+      rpmArray[1] = tickCounter * (TIMER_PER_uS / 1000000.) * (60. / PULSE_REV);
+      ++index;
+      break;
+    
+    case 2:
+      rpmArray[2] = tickCounter * (TIMER_PER_uS / 1000000.) * (60. / PULSE_REV);
+      ++index;
+    break;
+
+    case 3:
+      rpmArray[3] = tickCounter * (TIMER_PER_uS / 1000000.) * (60. / PULSE_REV);
+      ++index;
+    break;
+    
+    case 4:
+      rpmArray[4] = tickCounter * (TIMER_PER_uS / 1000000.) * (60. / PULSE_REV);
+      index = 0;
+    break;
+
+  }
+
+  tickCounter = 0;
+
+  rpm = (rpmArray[0] + rpmArray[1] + rpmArray[2] + rpmArray[3] + rpmArray[4]) / 5;
+}
+
+//-----------------------------------------------------------------------------------
