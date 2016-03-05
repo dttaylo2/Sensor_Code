@@ -11,19 +11,24 @@ import struct
 currentIndex = 0
 temperatureIndex = 1
 vibrationIndex = 2
+speedIndex = 3
+accIndex = 4
 
 # We are reading 5 bytes of one value, a comma, and five bytes of another for a total of 11 bytes.
-dataSize = 11
+dataSize = 30
 
 def printDetails(data):
 	parts = data.split(',')
 	print "Current: " + parts[currentIndex] + "A"
 	print "Temperature: " + parts[temperatureIndex] + "C"
 	print "Vibration: " + parts[vibrationIndex] + "Hz"
+	print "Speed: " + parts[speedIndex] + "RPM"
+	print "Acc: " + parts[accIndex]
+	print ""
 	
 	# Insert into DB
 	sql = "INSERT INTO sensorData (currentVal, temperatureVal, vibrationVal, rpmVal) VALUES (%s, %s, %s, %s)"
-	cursor.execute(sql, (parts[currentIndex], parts[temperatureIndex], parts[vibrationIndex], 0))
+	cursor.execute(sql, (parts[currentIndex], parts[temperatureIndex], parts[vibrationIndex], parts[speedIndex]))
 	db.commit()
 	
 # Connect
