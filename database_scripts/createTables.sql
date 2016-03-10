@@ -6,3 +6,14 @@ CREATE TABLE sensorData(
 	rpmVal BIGINT NOT NULL,
 	receivedTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE TABLE classifications(
+	id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    description VARCHAR(50) UNIQUE);
+    
+CREATE TABLE sensor_classifications(
+	sensorId INT NOT NULL,
+    classificationId INT NOT NULL,
+    accuracyRate DOUBLE NOT NULL,
+    FOREIGN KEY (sensorId) REFERENCES sensorData(id),
+    FOREIGN KEY (classificationId) REFERENCES classifications(id));
