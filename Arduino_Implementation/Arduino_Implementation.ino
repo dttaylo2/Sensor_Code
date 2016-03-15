@@ -11,8 +11,10 @@
 const byte M_TICK = 2;
 const int DEBOUNCE_DELAY = 10;
 volatile const long TIMER_PER_uS = 1000000;
-const unsigned int PULSE_REV = 8;
+const unsigned int PULSE_REV = 4;
 volatile int tickCounter = 0;
+volatile int tickCounter1 = 0;
+volatile int tickCounter2 = 0;
 volatile int rpmArray[5] = {0};
 volatile int index = 0;
 volatile unsigned long time = 100;
@@ -40,8 +42,7 @@ IRTherm therm;
 RF24 radio(RF_CE, RF_CSN);
 
 // Define values to be read
-double currentSum;
-double currentAverage;
+double current;
 double temperatureSum;
 double temperatureAverage;
 double vibrationSum;
@@ -66,6 +67,9 @@ double Irms;
 
 double Hz;
 
+unsigned long time1;
+unsigned long readTime;
+
 void setup() {
   
   // Start temperature sensor
@@ -80,6 +84,9 @@ void setup() {
   radio.openReadingPipe(1, pipes[1]);
   radio.stopListening();
 
+  time1 = 0;
+  readTime = 0;
+
   // Begin serial
   Serial.begin(9600);
   
@@ -90,37 +97,51 @@ void setup() {
 
 void loop() {
 
+
   
   // Reset values
-  currentSum = 0.0;
+  current = 0.0;
   temperatureSum = 0.0;
   vibrationSum = 0.0;
 
+  time1 = millis();  //take time reading before a sensor read cycle
+
+  current = calcIrms(1480);
+  
+  readTime = millis() - time1;  //compare sensor read cycle start time with current time
+  Serial.println(readTime);  //print the sensor read cycle time duration
+  Serial.println();
+
+  time1 = millis();  //take time reading before a sensor read cycle
+
   for(loopCounter = 0; loopCounter < numDataReads; loopCounter++) {
-
-
-    
+      
     // Call therm.read() to read object and ambient temperatures from the sensor.
     therm.read();
-    // Wait 50 ms
-    // delay(50);
-    // Convert data
-    currentSum += calcIrms(1480);
     temperatureSum += therm.object();
-    vibrationSum += (analogRead(sensorPin)) * 0.175;
-    // Wait 50 ms
-    // delay(50);
-   
   }
 
-  // Get values
-  currentAverage = currentSum / numDataReads;
+  readTime = millis() - time1;  //compare sensor read cycle start time with current time
+  Serial.println(readTime);  //print the sensor read cycle time duration
+  Serial.println();
+  
+  time1 = millis();  //take time reading before a sensor read cycle
+  
+  for(loopCounter = 0; loopCounter < numDataReads; loopCounter++) {
+    vibrationSum += (analogRead(sensorPin)) * 0.175;
+  }
+
+  readTime = millis() - time1;  //compare sensor read cycle start time with current time  
+  Serial.println(readTime);  //print the sensor read cycle time duration
+  Serial.println();
+  
+  // Get Average values from temp and vibration
   temperatureAverage = temperatureSum / numDataReads;
   vibrationAverage = vibrationSum / numDataReads;
 
   // Populate them.
   // Use four bytes to display current to a 2 decimal place precision.
-  dtostrf(currentAverage, 5, 2, &radioTX[0]);
+  dtostrf(current, 5, 2, &radioTX[0]);
   // Put a comma after current
   radioTX[6] = ',';
   // Use five bytes with 2 decimal places for temperature
@@ -138,8 +159,9 @@ void loop() {
   //Transmit data
   radio.write(&radioTX, dataSize);
 
-  //Serial.write(radioTX, dataSize);
-  //Serial.println();
+  /*Serial.write(radioTX, dataSize);
+  Serial.println(readTime);
+  Serial.println();*/
 
   // Delay
   delay(100);
@@ -206,7 +228,7 @@ long readVcc() {
   
 //-----------------------------------------------------------------
 void motorTick()
-{
+{ 
   if ((micros() - time) < DEBOUNCE_DELAY)
     return;
 
