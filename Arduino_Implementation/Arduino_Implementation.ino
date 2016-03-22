@@ -33,7 +33,7 @@ const uint64_t pipes[2] = {
 };
 
 // Data size we are sending
-const int dataSize = 24;
+const int dataSize = 30;
 
 // Create an IRTherm object to interact with
 IRTherm therm;
@@ -47,6 +47,8 @@ double temperatureSum;
 double temperatureAverage;
 double vibrationSum;
 double vibrationAverage;
+double acclrSum;
+double acclrAvg;
 
 // Read 16 times for average.
 int numDataReads = 8;
@@ -66,6 +68,13 @@ double ICAL = 11.3;
 double Irms;
 
 double Hz;
+
+
+//accelerometer
+int inPinAcclr = 2;
+double acclrRead;
+
+
 
 unsigned long time1;
 unsigned long readTime;
@@ -103,16 +112,17 @@ void loop() {
   current = 0.0;
   temperatureSum = 0.0;
   vibrationSum = 0.0;
+  acclrSum = 0.0;
 
   time1 = millis();  //take time reading before a sensor read cycle
 
   current = calcIrms(1480);
   
-  readTime = millis() - time1;  //compare sensor read cycle start time with current time
-  Serial.println(readTime);  //print the sensor read cycle time duration
-  Serial.println();
+  //readTime = millis() - time1;  //compare sensor read cycle start time with current time
+  //Serial.println(readTime);  //print the sensor read cycle time duration
+  //Serial.println();
 
-  time1 = millis();  //take time reading before a sensor read cycle
+  //time1 = millis();  //take time reading before a sensor read cycle
 
   for(loopCounter = 0; loopCounter < numDataReads; loopCounter++) {
       
@@ -121,23 +131,29 @@ void loop() {
     temperatureSum += therm.object();
   }
 
-  readTime = millis() - time1;  //compare sensor read cycle start time with current time
-  Serial.println(readTime);  //print the sensor read cycle time duration
-  Serial.println();
+  //readTime = millis() - time1;  //compare sensor read cycle start time with current time
+  //Serial.println(readTime);  //print the sensor read cycle time duration
+  //Serial.println();
   
-  time1 = millis();  //take time reading before a sensor read cycle
+  //time1 = millis();  //take time reading before a sensor read cycle
   
   for(loopCounter = 0; loopCounter < numDataReads; loopCounter++) {
     vibrationSum += (analogRead(sensorPin)) * 0.175;
   }
 
-  readTime = millis() - time1;  //compare sensor read cycle start time with current time  
-  Serial.println(readTime);  //print the sensor read cycle time duration
-  Serial.println();
+  //readTime = millis() - time1;  //compare sensor read cycle start time with current time  
+  //Serial.println(readTime);  //print the sensor read cycle time duration
+  //Serial.println();
+  
+  
+  for (loopCounter = 0; loopCounter < numDataReads; loopCounter++) {
+    acclrSum += (analogRead(inPinAcclr));
+  }
   
   // Get Average values from temp and vibration
   temperatureAverage = temperatureSum / numDataReads;
   vibrationAverage = vibrationSum / numDataReads;
+  acclrAvg = acclrSum / numDataReads;
 
   // Populate them.
   // Use four bytes to display current to a 2 decimal place precision.
@@ -153,12 +169,19 @@ void loop() {
 
   radioTX[18] = ',';
 
-
   dtostrf(rpm, 5, 0 , &radioTX[19]);
+
+  radioTX[24] = ',';
+
+  dtostrf(acclrAvg, 5, 0 , &radioTX[25]);
+
+  //readTime = millis() - time1;  //compare sensor read cycle start time with current time  
+  //Serial.println(readTime);  //print the sensor read cycle time duration
+  //Serial.println();
   
   //Transmit data
   radio.write(&radioTX, dataSize);
-
+  
   /*Serial.write(radioTX, dataSize);
   Serial.println(readTime);
   Serial.println();*/
