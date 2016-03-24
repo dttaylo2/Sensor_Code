@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>Senior Design Project</title>
+		<link href="http://getbootstrap.com/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link href="http://getbootstrap.com/examples/jumbotron-narrow/jumbotron-narrow.css" rel="stylesheet">
+        <script src="../static/js/jquery-2.2.2.min.js"></script>
+        <script src="../static/js/getData.js"></script>
+        <script src="../static/js/loadDataTable.js"></script>
+	</head>
+	<body>
+		<div class="container">
+			<div class="header">
+				<nav>
+					<ul class="nav nav-pills pull-right">
+						<li role="presentation" class="active" id="btnTest"><a href="#">Home</a></li>
+						<li role="presentation"><a href="showSignIn">Sign In</a></li>
+						<li role="presentation"><a href="showSignUp">Sign Up</a></li>
+					</ul>
+				</nav>
+				<h3 class="text-muted">Senior Design Project</h3>
+			</div>
+
+			<div class="jumbotron">
+				<table>
+                    <thead>
+                        <tr>
+                            <th data-field="time">Time</th>
+                            <th data-field="vibration">Vibration</th>
+                            <th data-field="temperature">Temperature</th>
+                            <th data-field="current">Current</th>
+                            <th data-field="speed">Speed</th>
+                            <th data-field="classification">Classification</th>
+                        </tr>
+                        <tbody class="tbody"></tbody>
+                    </thead>
+                </table>
+			</div>
+		</div>
+	</body>
+</html>

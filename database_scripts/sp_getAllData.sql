@@ -1,0 +1,8 @@
+DELIMITER $$
+
+CREATE PROCEDURE `sp_getAllData`()
+BEGIN
+	SELECT * FROM sensorData;
+END $$
+
+DELIMITER ;
