@@ -11,7 +11,7 @@ CREATE TABLE classifications(
 	id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     description VARCHAR(50) UNIQUE);
     
-CREATE TABLE sensor_classifications(
+CREATE TABLE sensorClassifications(
 	sensorId INT NOT NULL,
     classificationId INT NOT NULL,
     accuracyRate DOUBLE NOT NULL,
