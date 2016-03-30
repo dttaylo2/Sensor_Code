@@ -64,7 +64,7 @@ double filteredI;
 double offsetI = 512; 
 double sqI;
 double sumI;
-double ICAL = 11.3;
+double ICAL = 10;
 double Irms;
 
 double Hz;
