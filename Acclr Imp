@@ -1,0 +1,87 @@
+int AcclrPin = 2;
+
+unsigned long int vibCmpr0;
+unsigned long int vibCmpr1;
+int peak1;
+int peak0;
+int minMax;
+unsigned long int time0;
+unsigned long int time1;
+bool peak0Complete;
+bool peak1Complete;
+
+int numOfReads = 100;
+int count;
+
+int freq;
+
+
+void setup() {
+  
+  freq = 0;
+  vibCmpr0 = 0;
+  vibCmpr1 = 0;
+  peak0 = 0;
+  peak1 = 0;
+  time0 = 0;
+  time1 = 0;
+  peak0Complete = false;
+  peak1Complete = false;
+  Serial.begin(9600);
+}
+
+void loop() {
+
+      while((peak0Complete == false)||(peak1Complete == false)){
+       
+        while ((peak0Complete == false) && (peak1Complete == false)){
+          
+          vibCmpr0 = analogRead(AcclrPin);
+          vibCmpr1 = analogRead(AcclrPin) + 1;
+        
+          if (vibCmpr1 < vibCmpr0){
+            peak0 = vibCmpr0;
+            time0 = micros();
+            peak0Complete = true;
+          }       
+        }
+           
+        while ((peak0Complete == true) & (peak1Complete == false)){
+          vibCmpr0 = analogRead(AcclrPin);
+          vibCmpr1 = analogRead(AcclrPin) -1;
+          
+          if (vibCmpr1 > vibCmpr0){
+            peak1 = vibCmpr1;
+            time1 = micros();
+            peak1Complete = true;
+          }
+        }
+      }
+               
+   freq = (time1-time0) * 2;
+   minMax = peak0-peak1;
+   
+
+
+   Serial.print(freq);
+   Serial.print(" ,   ");
+   Serial.print(peak0);
+   Serial.print(" ,   ");
+   Serial.print(peak1);
+   Serial.print(" ,   ");
+   Serial.println(minMax);
+   
+   
+   freq = 0;
+   peak0 = 0;
+   peak1 = 0;
+   time0 = 0;
+   time1 = 0;
+   minMax = 0;
+   peak0Complete = false;
+   peak1Complete = false;
+ 
+
+    delay(100);
+
+}
