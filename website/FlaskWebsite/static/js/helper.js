@@ -1,6 +1,25 @@
 // Initialize collapse button
 $(".button-collapse").sideNav();
 
+// Load dates
+$.ajax({
+  url: '/getDates',
+  type: 'GET',
+  success: function(res) {
+    var dataObj = JSON.parse(res);
+
+    $.each(dataObj, function(index, value) {
+      var $li = $('<li>')
+        .append($('<p>').text(value.Date));
+
+        $('.side-nav').append($li);
+    });
+  },
+  error: function(error) {
+    console.log(error);
+  }
+});
+
 // Load charts
 google.charts.load('current', {packages: ['corechart', 'line']});
 google.charts.setOnLoadCallback(getData);
@@ -16,7 +35,6 @@ function getData() {
       drawCurrentChart(dataObj);
       drawSpeedChart(dataObj);
 
-      console.log(res);
     },
     error: function(error) {
       console.log(error);

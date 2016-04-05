@@ -15,8 +15,6 @@ $(function() {
 
 				$('.tbody').append($tr);
 			});
-
-			console.log(res);
 		},
 		error: function(error) {
 			console.log(error);

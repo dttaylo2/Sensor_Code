@@ -1,0 +1,11 @@
+DELIMITER $$
+
+CREATE PROCEDURE `sp_getDates`(
+)
+BEGIN
+	SELECT DISTINCT DATE(receivedTime)
+	FROM sensorData
+	ORDER BY DATE(receivedTime) DESC;
+END $$
+
+DELIMITER ;

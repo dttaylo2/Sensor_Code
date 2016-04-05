@@ -1,5 +1,6 @@
 #Import flask, render template
 #Import mysql
+from datetime import datetime, tzinfo, timedelta
 from flask import Flask, render_template, json, request
 from flask.ext.mysql import MySQL
 app = Flask(__name__)
@@ -7,7 +8,7 @@ app = Flask(__name__)
 #Configure MySQL
 mysql = MySQL()
 app.config['MYSQL_DATABASE_USER'] = 'root'
-app.config['MYSQL_DATABASE_PASSWORD'] = 'Magic331'
+app.config['MYSQL_DATABASE_PASSWORD'] = 'AdamPi331'
 app.config['MYSQL_DATABASE_DB'] = 'seniordesign'
 app.config['MYSQL_DATABASE_HOST'] = 'localhost'
 mysql.init_app(app)
@@ -16,6 +17,31 @@ mysql.init_app(app)
 @app.route('/')
 def main():
 	return render_template('index.html')
+
+#Define getDates method
+@app.route('/getDates', methods=['GET'])
+def getDates():
+	try:
+		#Create connection
+		conn = mysql.connect()
+		cursor = conn.cursor()
+
+		#Call procedure
+		cursor.callproc('sp_getDates', ())
+
+		#Fetch
+		data = cursor.fetchall()
+
+		dates_dict = []
+		for row in data:
+			dict_item = {
+				'Date': str(row[0])
+			}
+			dates_dict.append(dict_item)
+
+		return json.dumps(dates_dict)
+	except Exception as e:
+		return json.dumps({'error': str(e)})
 
 #Define getData method
 @app.route('/getData', methods=['GET', 'POST'])
