@@ -1,3 +1,5 @@
+#!/usr/bin/python2
+
 # Import things.
 import os, subprocess, sys, signal
 import time
@@ -19,12 +21,15 @@ dataSize = 30
 
 def printDetails(data):
 	parts = data.split(',')
-	print "Current: " + parts[currentIndex] + "A"
-	print "Temperature: " + parts[temperatureIndex] + "C"
-	print "Vibration: " + parts[vibrationIndex] + "Hz"
-	print "Speed: " + parts[speedIndex] + "RPM"
-	print "Acc: " + parts[accIndex]
-	print ""
+        try:
+	    print "Current: " + parts[currentIndex] + "A"
+	    print "Temperature: " + parts[temperatureIndex] + "C"
+	    print "Vibration: " + parts[vibrationIndex] + "Hz"
+	    print "Speed: " + parts[speedIndex] + "RPM"
+	    print "Acc: " + parts[accIndex]
+	    print ""
+        except IndexError:
+            print "Bad packet"
 	
 	# Insert into DB
 	sql = "INSERT INTO sensorData (currentVal, temperatureVal, vibrationVal, rpmVal) VALUES (%s, %s, %s, %s)"
@@ -39,7 +44,7 @@ cursor = db.cursor()
 radio = RF24(RPI_V2_GPIO_P1_15, BCM2835_SPI_CS0, BCM2835_SPI_SPEED_4MHZ)
 
 # Pipes are the ID numbers for the transceivers. This array exists in the arduino code as well.
-pipes = [0xF0F0F0F0E1, 0xF0F0F0F0D2]
+pipes = [0xF0F0F0F0E1, 0xF0F0F0F0D2, 0xF0F0F0F0C3]
 
 # Initial radio setup.
 radio.begin()
@@ -49,6 +54,7 @@ radio.printDetails()
 # Sets the radio to listen on pipe 1 and read on pipe 0. Opposite of arduino code, naturally.
 radio.openWritingPipe(pipes[1])
 radio.openReadingPipe(1, pipes[0])
+radio.openReadingPipe(2, pipes[2])
 radio.startListening()
 
 # Always listening
