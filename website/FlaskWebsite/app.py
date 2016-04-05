@@ -26,7 +26,7 @@ def getData():
 		cursor = conn.cursor()
 
 		#Call procedure
-		cursor.callproc('sp_getAllData', ())
+		cursor.callproc('sp_getAllData', (2000,))
 
 		#Fetch
 		data = cursor.fetchall()
