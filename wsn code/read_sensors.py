@@ -7,6 +7,7 @@ from RF24 import *
 from datetime import datetime, tzinfo, timedelta
 import MySQLdb
 import struct
+import codecs
 
 # Variables
 # Testing commit update
@@ -57,6 +58,8 @@ radio.openReadingPipe(1, pipes[0])
 radio.openReadingPipe(2, pipes[2])
 radio.startListening()
 
+file = open('tool2ex4.txt', 'wa')
+
 # Always listening
 while 1:
 	# If the radio is available, read from it.
@@ -64,7 +67,12 @@ while 1:
 		# While the radio is still available, read from it.
 		while(radio.available()):
 			# Print values to console.
-			printDetails(radio.read(dataSize))
+                        val =  radio.read(radio.getDynamicPayloadSize())
+                        print val
+                        file.write(val + '\n')
+
+                        #TODO: Print details
+                        # printDetails(radio.read(dataSize))
 
 			# TODO: I copied this code from last semester, not sure why radio needs to be reset. Will look into it.
 			# radio.stopListening()
