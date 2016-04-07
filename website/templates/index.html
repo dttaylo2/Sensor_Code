@@ -23,6 +23,7 @@
         <script src="../static/js/loadDataTable.js"></script>
     </head>
     <body>
+        <!-- Navigation -->
         <nav class="blue darken-2 lighten-1" role="navigation">
             <div class="nav-wrapper container">
                 <a href="index.html" class="brand-logo center">Machine Tool Diagnostics</a>
@@ -37,9 +38,8 @@
             <!-- First row is only row. -->
             <div class="row">
                 <!-- Have report data div take up whole space for now. -->
-                <!-- TODO: Add history div. -->
                 <div class="col s12">
-                    <div class="center"><h5>Machine Tool Data For February 4, 2016.</h5></div>
+                    <div class="center"><h5>Machine Tool Data For {{date}}.</h5></div>
                     <div class="center">
                     <table>
                         <thead>

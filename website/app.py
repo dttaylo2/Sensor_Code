@@ -1,5 +1,6 @@
 #Import flask, render template
 #Import mysql
+import time
 from datetime import datetime, tzinfo, timedelta
 from flask import Flask, render_template, json, request
 from flask.ext.mysql import MySQL
@@ -16,7 +17,7 @@ mysql.init_app(app)
 #Define basic route
 @app.route('/')
 def main():
-	return render_template('index.html')
+	return render_template('index.html', date = time.strftime("%B %d, %Y"))
 
 #Define getDates method
 @app.route('/getDates', methods=['GET'])
