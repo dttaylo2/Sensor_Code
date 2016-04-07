@@ -15,13 +15,13 @@ const uint64_t pipes[2] = {
 };
 
 // Data size we are sending
-const int dataSize = 7;
+const int dataSize = 8;
 
 // Start radio
 RF24 radio(RF_CE, RF_CSN);
 
 // Char array for data to be sent out
-char radioTX[7];
+char radioTX[9];
 
 int AcclrPin = 2;
 
@@ -49,6 +49,7 @@ void setup() {
 
   radioTX[0] = id;
   radioTX[1] = ',';
+  radioTX[2] = ' ';
 
     // Start radio with dnamic payloads.
   // Write to pipe 0, read on pipe 1.
@@ -68,12 +69,9 @@ void loop() {
     }
                
     for (count = 0;count<numOfReads;count++){
-        //Serial.println("Loop: " + count);
-        //Serial.println(magBuff[count]);
-        //Serial.print(" ,   ");
-        //Serial.println(timeBuff[count]);
+        
         //Transmit data
-        dtostrf(magBuff[count], 5, 0, &radioTX[2]);
+        dtostrf(magBuff[count], 5, 0, &radioTX[3]);
         radio.write(&radioTX, dataSize);
     } 
 }
