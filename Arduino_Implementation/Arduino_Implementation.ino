@@ -109,17 +109,19 @@ void loop() {
   current = 0.0;
   temperatureSum = 0.0;
 
-  time0 = millis();  //take time reading before a sensor read cycle
-  time1 = time0;
+  //time0 = millis();  //take time reading before a sensor read cycle
+  //time1 = time0;
 
   current = calcIrms(200);
   
+  /*
   readTime = millis() - time1;  //compare sensor read cycle start time with current time
   Serial.print("Current : ");
   Serial.print(readTime);  //print the sensor read cycle time duration
   Serial.print(" , ");
+  */
 
-  time1 = millis();  //take time reading before a sensor read cycle
+  //time1 = millis();  //take time reading before a sensor read cycle
 
   for(loopCounter = 0; loopCounter < numDataReads; loopCounter++) {
       
@@ -128,17 +130,18 @@ void loop() {
     temperatureSum += therm.object();
   }
 
+/*
   readTime = millis() - time1;  //compare sensor read cycle start time with current time
   Serial.print("Temp : ");
   Serial.print(readTime);  //print the sensor read cycle time duration
   Serial.print(" , ");
+  */
   
   
   // Get Average values from temp and vibration
   temperatureAverage = temperatureSum / numDataReads;
 
   
-
   // Populate them.
   // Use four bytes to display current to a 2 decimal place precision.
   dtostrf(current, 5, 2, &radioTX[3]);
@@ -154,11 +157,13 @@ void loop() {
   //Transmit data
   radio.write(&radioTX, dataSize);
   
+  /*
   readTime = millis() - time0;  //compare sensor read cycle start time with current time  
   Serial.print("Cycle Time : ");
   Serial.println(readTime);  //print the sensor read cycle time duration
   Serial.println("");
   Serial.println("");
+  */
     
   //Serial.write(radioTX, dataSize);
   //Serial.println(readTime);
