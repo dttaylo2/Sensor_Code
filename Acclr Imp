@@ -1,87 +1,79 @@
+#include <nRF24L01.h>
+#include <printf.h>
+#include <RF24.h>
+#include <RF24_config.h>
+//#include <TimerOne.h>
+
+// Define radio pins
+#define RF_CE 7
+#define RF_CSN 8
+
+// Radio pipe addresses for the 2 nodes to communicate
+const uint64_t pipes[2] = {
+  0xF0F0F0F0C3LL,
+  0xF0F0F0F0D2LL
+};
+
+// Data size we are sending
+const int dataSize = 7;
+
+// Start radio
+RF24 radio(RF_CE, RF_CSN);
+
+// Char array for data to be sent out
+char radioTX[7];
+
 int AcclrPin = 2;
+
+//unsigned long int timeBuff[10];
+double magBuff[50];
 
 unsigned long int vibCmpr0;
 unsigned long int vibCmpr1;
-int peak1;
-int peak0;
-int minMax;
+unsigned long int peak1;
+unsigned long int peak0;
 unsigned long int time0;
 unsigned long int time1;
 bool peak0Complete;
 bool peak1Complete;
 
-int numOfReads = 100;
+int numOfReads = 50;
 int count;
 
 int freq;
 
+char id = '2';
+
 
 void setup() {
+
+  radioTX[0] = id;
+  radioTX[1] = ',';
+
+    // Start radio with dnamic payloads.
+  // Write to pipe 0, read on pipe 1.
+  radio.begin();
+  radio.enableDynamicPayloads();
+  radio.openWritingPipe(pipes[0]);
+  radio.openReadingPipe(1, pipes[1]);
+  radio.stopListening();
   
-  freq = 0;
-  vibCmpr0 = 0;
-  vibCmpr1 = 0;
-  peak0 = 0;
-  peak1 = 0;
-  time0 = 0;
-  time1 = 0;
-  peak0Complete = false;
-  peak1Complete = false;
   Serial.begin(9600);
 }
 
 void loop() {
 
-      while((peak0Complete == false)||(peak1Complete == false)){
-       
-        while ((peak0Complete == false) && (peak1Complete == false)){
-          
-          vibCmpr0 = analogRead(AcclrPin);
-          vibCmpr1 = analogRead(AcclrPin) + 1;
-        
-          if (vibCmpr1 < vibCmpr0){
-            peak0 = vibCmpr0;
-            time0 = micros();
-            peak0Complete = true;
-          }       
-        }
-           
-        while ((peak0Complete == true) & (peak1Complete == false)){
-          vibCmpr0 = analogRead(AcclrPin);
-          vibCmpr1 = analogRead(AcclrPin) -1;
-          
-          if (vibCmpr1 > vibCmpr0){
-            peak1 = vibCmpr1;
-            time1 = micros();
-            peak1Complete = true;
-          }
-        }
-      }
+    for (count = 0;count< numOfReads;count++){   
+        magBuff[count] = analogRead(AcclrPin);
+    }
                
-   freq = (time1-time0) * 2;
-   minMax = peak0-peak1;
-   
-
-
-   Serial.print(freq);
-   Serial.print(" ,   ");
-   Serial.print(peak0);
-   Serial.print(" ,   ");
-   Serial.print(peak1);
-   Serial.print(" ,   ");
-   Serial.println(minMax);
-   
-   
-   freq = 0;
-   peak0 = 0;
-   peak1 = 0;
-   time0 = 0;
-   time1 = 0;
-   minMax = 0;
-   peak0Complete = false;
-   peak1Complete = false;
- 
-
-    delay(100);
-
+    for (count = 0;count<numOfReads;count++){
+        //Serial.println("Loop: " + count);
+        //Serial.println(magBuff[count]);
+        //Serial.print(" ,   ");
+        //Serial.println(timeBuff[count]);
+        //Transmit data
+        dtostrf(magBuff[count], 5, 0, &radioTX[2]);
+        radio.write(&radioTX, dataSize);
+    } 
 }
