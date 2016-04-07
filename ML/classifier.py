@@ -29,16 +29,16 @@ y_train_ohe = to_categorical(y_train)
 
 model = Sequential()
 model.add(Dense(input_dim=X_train.shape[1],
-                output_dim=2000,
+                output_dim=200,
                 activation='tanh',
                 init='uniform'))
-model.add(Dense(output_dim=1500,
+model.add(Dense(output_dim=150,
                 activation='tanh',
                 init='uniform'))
-model.add(Dense(output_dim=1000,
+model.add(Dense(output_dim=100,
                 activation='tanh',
                 init='uniform'))
-model.add(Dense(output_dim=500,
+model.add(Dense(output_dim=50,
                 activation='tanh',
                 init='uniform'))
 model.add(Dense(output_dim=y_train_ohe.shape[1],
@@ -49,4 +49,4 @@ sgd = SGD(lr=0.001, decay=1e-7, momentum=0.9)
 model.compile(loss='categorical_crossentropy',
               optimizer=sgd)
 model.fit(X_train, y_train_ohe, validation_split=0.1,
-          show_accuracy=True, nb_epoch=1000)
+          show_accuracy=True, nb_epoch=200)
