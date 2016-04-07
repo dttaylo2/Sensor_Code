@@ -19,6 +19,7 @@ volatile int rpmArray[5] = {0};
 volatile int index = 0;
 volatile unsigned long time = 100;
 volatile unsigned long rpm = 0;
+
 // Define radio pins
 #define RF_CE 7
 #define RF_CSN 8
@@ -33,7 +34,7 @@ const uint64_t pipes[2] = {
 };
 
 // Data size we are sending
-const int dataSize = 30;
+const int dataSize = 20;
 
 // Create an IRTherm object to interact with
 IRTherm therm;
@@ -45,10 +46,6 @@ RF24 radio(RF_CE, RF_CSN);
 double current;
 double temperatureSum;
 double temperatureAverage;
-double vibrationSum;
-double vibrationAverage;
-double acclrSum;
-double acclrAvg;
 
 // Read 16 times for average.
 int numDataReads = 8;
@@ -70,16 +67,17 @@ double Irms;
 double Hz;
 
 
-//accelerometer
-int inPinAcclr = 2;
-double acclrRead;
+char id = '1';
 
-
-
+unsigned long time0;
 unsigned long time1;
 unsigned long readTime;
 
 void setup() {
+
+  radioTX[0] = id;
+  radioTX[1] = ',';
+  radioTX[2] = ' ';
   
   // Start temperature sensor
   therm.begin();
@@ -93,6 +91,7 @@ void setup() {
   radio.openReadingPipe(1, pipes[1]);
   radio.stopListening();
 
+  time0 = 0;
   time1 = 0;
   readTime = 0;
 
@@ -106,21 +105,21 @@ void setup() {
 
 void loop() {
 
-
-  
   // Reset values
   current = 0.0;
   temperatureSum = 0.0;
-  vibrationSum = 0.0;
-  acclrSum = 0.0;
 
-  time1 = millis();  //take time reading before a sensor read cycle
+  //time0 = millis();  //take time reading before a sensor read cycle
+  //time1 = time0;
 
-  current = calcIrms(1480);
+  current = calcIrms(200);
   
-  //readTime = millis() - time1;  //compare sensor read cycle start time with current time
-  //Serial.println(readTime);  //print the sensor read cycle time duration
-  //Serial.println();
+  /*
+  readTime = millis() - time1;  //compare sensor read cycle start time with current time
+  Serial.print("Current : ");
+  Serial.print(readTime);  //print the sensor read cycle time duration
+  Serial.print(" , ");
+  */
 
   //time1 = millis();  //take time reading before a sensor read cycle
 
@@ -131,63 +130,44 @@ void loop() {
     temperatureSum += therm.object();
   }
 
-  //readTime = millis() - time1;  //compare sensor read cycle start time with current time
-  //Serial.println(readTime);  //print the sensor read cycle time duration
-  //Serial.println();
+/*
+  readTime = millis() - time1;  //compare sensor read cycle start time with current time
+  Serial.print("Temp : ");
+  Serial.print(readTime);  //print the sensor read cycle time duration
+  Serial.print(" , ");
+  */
   
-  //time1 = millis();  //take time reading before a sensor read cycle
-  
-  for(loopCounter = 0; loopCounter < numDataReads; loopCounter++) {
-    vibrationSum += (analogRead(sensorPin)) * 0.175;
-  }
-
-  //readTime = millis() - time1;  //compare sensor read cycle start time with current time  
-  //Serial.println(readTime);  //print the sensor read cycle time duration
-  //Serial.println();
-  
-  
-  for (loopCounter = 0; loopCounter < numDataReads; loopCounter++) {
-    acclrSum += (analogRead(inPinAcclr));
-  }
   
   // Get Average values from temp and vibration
   temperatureAverage = temperatureSum / numDataReads;
-  vibrationAverage = vibrationSum / numDataReads;
-  acclrAvg = acclrSum / numDataReads;
 
+  
   // Populate them.
   // Use four bytes to display current to a 2 decimal place precision.
-  dtostrf(current, 5, 2, &radioTX[0]);
+  dtostrf(current, 5, 2, &radioTX[3]);
   // Put a comma after current
-  radioTX[6] = ',';
+  radioTX[8] = ',';
   // Use five bytes with 2 decimal places for temperature
-  dtostrf(temperatureAverage, 5, 2, &radioTX[7]);
+  dtostrf(temperatureAverage, 5, 2, &radioTX[9]);
   
-  radioTX[12] = ',';
-  
-  dtostrf(vibrationAverage, 5, 2 , &radioTX[13]);
+  radioTX[14] = ',';
 
-  radioTX[18] = ',';
+  dtostrf(rpm, 5, 0 , &radioTX[15]);
 
-  dtostrf(rpm, 5, 0 , &radioTX[19]);
-
-  radioTX[24] = ',';
-
-  dtostrf(acclrAvg, 5, 0 , &radioTX[25]);
-
-  //readTime = millis() - time1;  //compare sensor read cycle start time with current time  
-  //Serial.println(readTime);  //print the sensor read cycle time duration
-  //Serial.println();
-  
   //Transmit data
   radio.write(&radioTX, dataSize);
   
-  /*Serial.write(radioTX, dataSize);
-  Serial.println(readTime);
-  Serial.println();*/
-
-  // Delay
-  delay(100);
+  /*
+  readTime = millis() - time0;  //compare sensor read cycle start time with current time  
+  Serial.print("Cycle Time : ");
+  Serial.println(readTime);  //print the sensor read cycle time duration
+  Serial.println("");
+  Serial.println("");
+  */
+    
+  //Serial.write(radioTX, dataSize);
+  //Serial.println(readTime);
+  //Serial.println();
 }
 
 //-----------------------------------------------------------------

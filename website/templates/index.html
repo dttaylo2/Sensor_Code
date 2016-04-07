@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html>
-	<head>
+  <head>
         <!--Import Google Icon Font-->
         <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
         <!--Import materialize.css-->
-        <link type="text/css" rel="stylesheet" href="css/materialize.css"  media="screen,projection"/>
+        <link type="text/css" rel="stylesheet" href="../static/css/materialize.css"  media="screen,projection"/>
 
         <!--Let browser know website is optimized for mobile-->
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -14,25 +14,21 @@
 
         <!--Import jQuery before materialize.js-->
         <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
-        <script type="text/javascript" src="js/materialize.js"></script>
+        <script type="text/javascript" src="../static/js/materialize.js"></script>
 
         <!-- Chart library -->
         <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
-        <!-- My CSS -->
-        <link href="css/style.css" media="all" rel="stylesheet" type="text/css"/>
+        <!-- My scripts -->
+        <script src="../static/js/loadDataTable.js"></script>
     </head>
     <body>
+        <!-- Navigation -->
         <nav class="blue darken-2 lighten-1" role="navigation">
             <div class="nav-wrapper container">
                 <a href="index.html" class="brand-logo center">Machine Tool Diagnostics</a>
                 <ul id="slide-out" class="side-nav" style="color: black;">
                     <li><h3 class="center" style="color: black;">History</h3></li>
-                    <li><p>February 5, 2016</li>
-                    <li><p>February 4, 2016</li>
-                    <li><p>February 3, 2016</li>
-                    <li><p>February 2, 2016</li>
-                    <li><p>February 1, 2016</li>
                 </ul>
                 <a href="#" data-activates="slide-out" class="button-collapse show-on-large"><i class="mdi-navigation-menu"></i></a>
             </div>
@@ -42,9 +38,8 @@
             <!-- First row is only row. -->
             <div class="row">
                 <!-- Have report data div take up whole space for now. -->
-                <!-- TODO: Add history div. -->
                 <div class="col s12">
-                    <div class="center"><h5>Machine Tool Data For February 4, 2016.</h5></div>
+                    <div class="center"><h5>Machine Tool Data For {{date}}.</h5></div>
                     <div class="center">
                     <table>
                         <thead>
@@ -56,32 +51,7 @@
                                 <th data-field="speed">Speed</th>
                                 <th data-field="classification">Classification</th>
                             </tr>
-                            <tbody>
-                                <tr>
-                                    <td>01:00 am</td>
-                                    <td>Normal</td>
-                                    <td>Normal</td>
-                                    <td>Normal</td>
-                                    <td>Normal</td>
-                                    <td>Working</td>
-                                </tr>
-                                <tr>
-                                    <td>02:00 am</td>
-                                    <td>Normal</td>
-                                    <td>Normal</td>
-                                    <td>Normal</td>
-                                    <td>Normal</td>
-                                    <td>Working</td>
-                                </tr>
-                                <tr>
-                                    <td>03:00 am</td>
-                                    <td>Normal</td>
-                                    <td>Normal</td>
-                                    <td>Normal</td>
-                                    <td>Normal</td>
-                                    <td>Working</td>
-                                </tr>
-                            </tbody>
+                            <tbody class="tbody"></tbody>
                         </thead>
                     </table>
                     </div>
@@ -89,7 +59,8 @@
             </div>
             <div id="temp_chart_div" class="row center"></div>
             <div id="cur_chart_div" class="row center"></div>
+            <div id="speed_chart_div" class="row center"></div>
         </div>
     </body>
-    <script type="text/javascript" src="js/helper.js"></script>
+    <script type="text/javascript" src="../static/js/helper.js"></script>
 </html>
