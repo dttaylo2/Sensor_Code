@@ -2,6 +2,7 @@
 
 # Import things.
 import os, subprocess, sys, signal
+import numpy as np
 import time
 from RF24 import *
 from datetime import datetime, tzinfo, timedelta
@@ -37,6 +38,17 @@ def printDetails(data):
 	cursor.execute(sql, (parts[currentIndex], parts[temperatureIndex], parts[vibrationIndex], parts[speedIndex]))
 	db.commit()
 	
+def dumpAccelerometer(acc1, acc2):
+    
+    sql = "INSERT INTO accelerometer (receivedTime, magnitude1, magnitude2) VALUES (%s, %s, %s)"
+    cursor.execute(sql, (datetime.now(), acc1, acc2))
+    db.commit()
+
+def dumpSensors(temp, curr, rpm, acc1Avg, acc1Std, acc2Avg, acc2Std):
+    sql = "INSERT INTO sensorData (temperatureVal, currentVal, rpmVal, receivedTime, acc1Avg, acc1Std, acc2Avg, acc2Std) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
+    cursor.execute(sql, (temp, curr, rpm, datetime.now(), acc1Avg, acc1Std, acc2Avg, acc2Std))
+    db.commit()
+
 # Connect
 db = MySQLdb.connect("localhost", "root", "AdamPi331", "seniordesign")
 cursor = db.cursor()
@@ -58,7 +70,9 @@ radio.openReadingPipe(1, pipes[0])
 radio.openReadingPipe(2, pipes[2])
 radio.startListening()
 
-file = open('good_bearing_dull_blade.txt', 'wa')
+file = open('/dev/null', 'wa')
+acc1Readings = []
+acc2Readings = []
 
 # Always listening
 while 1:
@@ -68,8 +82,51 @@ while 1:
 		while(radio.available()):
 			# Print values to console.
                         val =  radio.read(radio.getDynamicPayloadSize())
-                        print val
+                        #print val
                         file.write(val + '\n')
+                        
+                        if (str(val)[0] == '2'):
+                            try:
+                                print(str(val))
+                                accelerometer1 = str(val).strip().split(',')[1]
+                                accelerometer2 = str(val).strip().split(',')[2]
+                                accelerometer1 = int(accelerometer1.split('\x00')[0])
+                                accelerometer2 = int(accelerometer2.split('\x00')[0])
+
+                                #sys.stdout.write(str(accelerometer) + '\r')
+                                dumpAccelerometer(accelerometer1, accelerometer2)
+                                acc1Readings.append(accelerometer1)
+                                acc2Readings.append(accelerometer2)
+                                
+                            except KeyboardInterrupt:
+                                sys.exit("User killed execution")
+                            except:
+                                print "Warning: something wrong"
+                        elif (str(val)[0] == '1'):
+                            try:
+                                vals = str(val).strip().split(',')
+                                print str(val)
+                                curr = vals[1]
+                                temp = vals[2]
+                                rpm = vals[3]
+                                if len(acc1Readings) > 0 and len(acc2Readings) > 0:
+                                    acc1Avg = np.average(acc1Readings)
+                                    acc1Std = np.std(acc1Readings)
+                                    acc2Avg = np.average(acc2Readings)
+                                    acc2Std = np.std(acc2Readings)
+                                else:
+                                    acc1Avg = 0
+                                    acc1Std = 0
+                                    acc2Avg = 0
+                                    acc2Std = 0
+                                dumpSensors(temp, curr, rpm, acc1Avg, acc1Std, acc2Avg, acc2Std)
+                                acc1Readings = []
+                                acc2Readings = []
+                                #print('Sensors dumped')
+                            except KeyboardInterrupt:
+                                sys.exit("User killed execution")
+                            except:
+                                print "Warning: something wrong with sensor data"
 
                         #TODO: Print details
                         # printDetails(radio.read(dataSize))
