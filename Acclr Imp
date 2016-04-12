@@ -1,8 +1,6 @@
 #include <nRF24L01.h>
-#include <printf.h>
 #include <RF24.h>
 #include <RF24_config.h>
-//#include <TimerOne.h>
 
 // Define radio pins
 #define RF_CE 7
@@ -14,42 +12,23 @@ const uint64_t pipes[2] = {
   0xF0F0F0F0D2LL
 };
 
-// Data size we are sending
-const int dataSize = 8;
-
 // Start radio
 RF24 radio(RF_CE, RF_CSN);
 
-// Char array for data to be sent out
-char radioTX[9];
-
-int AcclrPin = 2;
-
-//unsigned long int timeBuff[10];
-double magBuff[50];
-
-unsigned long int vibCmpr0;
-unsigned long int vibCmpr1;
-unsigned long int peak1;
-unsigned long int peak0;
-unsigned long int time0;
-unsigned long int time1;
-bool peak0Complete;
-bool peak1Complete;
-
+const int BEAR_ACC_PIN = 0;
+const int TOOL_ACC_PIN = 2;
+const char RF_ID = '2';
+const int DATA_SIZE = 15;
+double magBuff_tool[50];
+double magBuff_bear[50];
 int numOfReads = 50;
-int count;
-
-int freq;
-
-char id = '2';
-
+char radioTX[14];
 
 void setup() {
-
-  radioTX[0] = id;
+  radioTX[0] = RF_ID;
   radioTX[1] = ',';
   radioTX[2] = ' ';
+
 
     // Start radio with dnamic payloads.
   // Write to pipe 0, read on pipe 1.
@@ -64,14 +43,19 @@ void setup() {
 
 void loop() {
 
-    for (count = 0;count< numOfReads;count++){   
-        magBuff[count] = analogRead(AcclrPin);
-    }
+    for (int count = 0; count < numOfReads; count++)
+        magBuff_tool[count] = analogRead(TOOL_ACC_PIN);
+
+    for (int count = 0; count < numOfReads; count++)
+        magBuff_bear[count] = analogRead(BEAR_ACC_PIN);
                
-    for (count = 0;count<numOfReads;count++){
-        
-        //Transmit data
-        dtostrf(magBuff[count], 5, 0, &radioTX[3]);
-        radio.write(&radioTX, dataSize);
-    } 
+    for (int count = 0; count < numOfReads; count++){      
+        dtostrf(magBuff_tool[count], 5, 0, &radioTX[3]);  
+        radioTX[8] = ',';
+        radioTX[9] = ' ';    
+        dtostrf(magBuff_bear[count], 5, 0, &radioTX[10]);                
+        radio.write(&radioTX, DATA_SIZE);
+    }
+
+      //Serial.println(analogRead(TOOL_ACC_PIN));
 }
