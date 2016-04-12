@@ -9,6 +9,9 @@ from datetime import datetime, tzinfo, timedelta
 import MySQLdb
 import struct
 import codecs
+import pickle
+
+model = pickle.load(open('model.pkl', 'rb'))
 
 # Variables
 # Testing commit update
@@ -44,9 +47,9 @@ def dumpAccelerometer(acc1, acc2):
     cursor.execute(sql, (datetime.now(), acc1, acc2))
     db.commit()
 
-def dumpSensors(temp, curr, rpm, acc1Avg, acc1Std, acc2Avg, acc2Std):
-    sql = "INSERT INTO sensorData (temperatureVal, currentVal, rpmVal, receivedTime, acc1Avg, acc1Std, acc2Avg, acc2Std) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
-    cursor.execute(sql, (temp, curr, rpm, datetime.now(), acc1Avg, acc1Std, acc2Avg, acc2Std))
+def dumpSensors(temp, curr, rpm, acc1Avg, acc1Std, acc2Avg, acc2Std, classifier):
+    sql = "INSERT INTO sensorData (temperatureVal, currentVal, rpmVal, receivedTime, acc1Avg, acc1Std, acc2Avg, acc2Std, classification) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
+    cursor.execute(sql, (temp, curr, rpm, datetime.now(), acc1Avg, acc1Std, acc2Avg, acc2Std, classifier))
     db.commit()
 
 # Connect
@@ -119,7 +122,9 @@ while 1:
                                     acc1Std = 0
                                     acc2Avg = 0
                                     acc2Std = 0
-                                dumpSensors(temp, curr, rpm, acc1Avg, acc1Std, acc2Avg, acc2Std)
+                                data = np.array([curr, temp, rpm, acc1Avg, acc1Std]).reshape((1, 5))
+                                prediction = model.predict_classes(data)
+                                dumpSensors(temp, curr, rpm, acc1Avg, acc1Std, acc2Avg, acc2Std, 2)
                                 acc1Readings = []
                                 acc2Readings = []
                                 #print('Sensors dumped')
