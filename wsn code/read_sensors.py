@@ -124,7 +124,7 @@ while 1:
                                     acc2Std = 0
                                 data = np.array([curr, temp, rpm, acc1Avg, acc1Std]).reshape((1, 5))
                                 prediction = model.predict_classes(data)
-                                dumpSensors(temp, curr, rpm, acc1Avg, acc1Std, acc2Avg, acc2Std, 2)
+                                dumpSensors(temp, curr, rpm, acc1Avg, acc1Std, acc2Avg, acc2Std, prediction)
                                 acc1Readings = []
                                 acc2Readings = []
                                 #print('Sensors dumped')
