@@ -53,7 +53,7 @@ def getData():
 		cursor = conn.cursor()
 
 		#Call procedure
-		cursor.callproc('sp_getAllData', (20,))
+		cursor.callproc('sp_getAllData', (1000,))
 
 		#Fetch
 		data = cursor.fetchall()
@@ -67,9 +67,10 @@ def getData():
 				'Id': row[0],
 				'Temperature': row[1],
 				'Current': row[2],
-				'Vibration': row[3],
-				'Speed': row[4],
-				'Date': row[5]
+				'Vibration1': row[5],
+				'Vibration2': row[7],
+				'Speed': row[3],
+				'Date': row[4]
 			}
 			data_dict.append(dict_item)
 

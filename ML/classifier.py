@@ -19,9 +19,11 @@ from keras.utils.np_utils import to_categorical
 from keras.optimizers import SGD
 from sklearn.cross_validation import train_test_split
 
-df = pd.read_csv('training_data.csv')
+df = pd.read_csv('test_data_041216.csv')
 X = df.iloc[:, :-1].values
 y = df.iloc[:, -1].values
+
+epochs = 5000
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1)
 
@@ -47,16 +49,17 @@ model.add(Dense(output_dim=y_train_ohe.shape[1],
                 activation='softmax',
                 init='uniform'))
 
-sgd = SGD(lr=0.001, decay=1e-7, momentum=0.9)
+sgd = SGD(lr=0.01, decay=1e-6, momentum=0.95)
 model.compile(loss='categorical_crossentropy',
               optimizer=sgd)
 
 training_accuracy = []
 testing_accuracy = []
 
-for i in range(50):
-    model.fit(X_train, y_train_ohe, validation_split=0.1,
-          show_accuracy=True, nb_epoch=5000)
+for i in range(10):
+    model.compile(loss='categorical_crossentropy', optimizer=sgd)
+    training = model.fit(X_train, y_train_ohe, validation_split=0.1,
+          show_accuracy=True, nb_epoch=epochs)
     y_test_pred = model.predict_classes(X_test)
     y_train_pred = model.predict_classes(X_train)
     y_test_accuracy = len(y_test[y_test==y_test_pred]) / len(y_test)
