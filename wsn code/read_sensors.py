@@ -76,6 +76,8 @@ radio.startListening()
 file = open('/dev/null', 'wa')
 acc1Readings = []
 acc2Readings = []
+lastAvg = [0, 0]
+lastStd = [0, 0]
 
 # Always listening
 while 1:
@@ -117,11 +119,11 @@ while 1:
                                     acc1Std = np.std(acc1Readings)
                                     acc2Avg = np.average(acc2Readings)
                                     acc2Std = np.std(acc2Readings)
+                                    lastAvg = [acc1Avg, acc2Avg]
+                                    lastStd = [acc1Std, acc2Std]
                                 else:
-                                    acc1Avg = 0
-                                    acc1Std = 0
-                                    acc2Avg = 0
-                                    acc2Std = 0
+                                    acc1Avg, acc2Avg = lastAvg[0], lastAvg[1]
+                                    acc1Std, acc2Std = lastStd[0], lastStd[1]
                                 data = np.array([curr, temp, rpm, acc1Avg, acc1Std]).reshape((1, 5))
                                 prediction = model.predict_classes(data)
                                 dumpSensors(temp, curr, rpm, acc1Avg, acc1Std, acc2Avg, acc2Std, 2)
