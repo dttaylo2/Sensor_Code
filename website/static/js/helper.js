@@ -26,7 +26,7 @@ google.charts.setOnLoadCallback(getData);
 
 function getData() {
   $.ajax({
-    url: '/getData',
+    url: '/getChartData',
     type: 'GET',
     success: function(res) {
       var dataObj = JSON.parse(res);

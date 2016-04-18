@@ -1,6 +1,6 @@
 $(function() {
 	$.ajax({
-		url: '/getData',
+		url: '/getTableData',
 		type: 'GET',
 		success: function(res) {
 			var dataObj = JSON.parse(res);
