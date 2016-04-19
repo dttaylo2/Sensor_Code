@@ -13,8 +13,8 @@ $(function() {
 				$.each(dataObj, function(index, value) {
 					var $tr = $('<tr>')
 						.append($('<td>').text(value.Date))
-						.append($('<td>').text(value.Vibration1))
-						.append($('<td>').text(value.Vibration2))
+						.append($('<td>').text(Math.round(value.Vibration1)))
+						.append($('<td>').text(Math.round(value.Vibration2)))
 						.append($('<td>').text(value.Temperature))
 						.append($('<td>').text(value.Current))
 						.append($('<td>').text(value.Speed));
