@@ -44,13 +44,13 @@ def printDetails(data):
 def dumpAccelerometer(acc1, acc2):
     
     sql = "INSERT INTO accelerometer (receivedTime, magnitude1, magnitude2) VALUES (%s, %s, %s)"
-    cursor.execute(sql, (datetime.now(), acc1, acc2))
-    db.commit()
+#    cursor.execute(sql, (datetime.now(), acc1, acc2))
+#    db.commit()
 
 def dumpSensors(temp, curr, rpm, acc1Avg, acc1Std, acc2Avg, acc2Std, classifier):
     sql = "INSERT INTO sensorData (temperatureVal, currentVal, rpmVal, receivedTime, acc1Avg, acc1Std, acc2Avg, acc2Std, classification) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
-    cursor.execute(sql, (temp, curr, rpm, datetime.now(), acc1Avg, acc1Std, acc2Avg, acc2Std, classifier))
-    db.commit()
+#    cursor.execute(sql, (temp, curr, rpm, datetime.now(), acc1Avg, acc1Std, acc2Avg, acc2Std, classifier))
+#    db.commit()
 
 # Connect
 db = MySQLdb.connect("localhost", "root", "AdamPi331", "seniordesign")
@@ -129,7 +129,7 @@ while 1:
                                 except:
                                     prediction = 0
                                     print('Error predicting classification')
-                                dumpSensors(temp, curr, rpm, acc1Avg, acc1Std, acc2Avg, acc2Std, 0)#prediction[0])
+                                dumpSensors(temp, curr, rpm, acc1Avg, acc1Std, acc2Avg, acc2Std, 1)#prediction[0])
                                 acc1Readings = []
                                 acc2Readings = []
                                 #print('Sensors dumped')
