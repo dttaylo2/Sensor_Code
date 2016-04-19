@@ -129,7 +129,7 @@ while 1:
                                 except:
                                     prediction = 0
                                     print('Error predicting classification')
-                                dumpSensors(temp, curr, rpm, acc1Avg, acc1Std, acc2Avg, acc2Std, prediction[0])
+                                dumpSensors(temp, curr, rpm, acc1Avg, acc1Std, acc2Avg, acc2Std, 3 ) #prediction[0])
                                 acc1Readings = []
                                 acc2Readings = []
                                 #print('Sensors dumped')
