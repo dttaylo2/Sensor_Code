@@ -1,24 +1,31 @@
 $(function() {
-	$.ajax({
-		url: '/getTableData',
-		type: 'GET',
-		success: function(res) {
-			var dataObj = JSON.parse(res);
+	setInterval(
+	    function()
+	    {
+	      $.ajax({
+			url: '/getTableData',
+			type: 'GET',
+			success: function(res) {
+				var dataObj = JSON.parse(res);
 
-			$.each(dataObj, function(index, value) {
-				var $tr = $('<tr>')
-					.append($('<td>').text(value.Date))
-					.append($('<td>').text(value.Vibration1))
-					.append($('<td>').text(value.Vibration2))
-					.append($('<td>').text(value.Temperature))
-					.append($('<td>').text(value.Current))
-					.append($('<td>').text(value.Speed));
+				$(".tbody tr").remove(); 
 
-				$('.tbody').append($tr);
-			});
-		},
-		error: function(error) {
-			console.log(error);
-		}
-	});
+				$.each(dataObj, function(index, value) {
+					var $tr = $('<tr>')
+						.append($('<td>').text(value.Date))
+						.append($('<td>').text(value.Vibration1))
+						.append($('<td>').text(value.Vibration2))
+						.append($('<td>').text(value.Temperature))
+						.append($('<td>').text(value.Current))
+						.append($('<td>').text(value.Speed));
+
+					$('.tbody').append($tr);
+				});
+			},
+			error: function(error) {
+				console.log(error);
+			}
+		  });
+	    },
+	    1000); 
 });
