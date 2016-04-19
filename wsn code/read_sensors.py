@@ -125,11 +125,11 @@ while 1:
                                 #print str(val)
                                 try:
                                     prediction = model.predict_classes(data)
-                                    print(prediction)
+                                    print(prediction[0])
                                 except:
                                     prediction = 0
                                     print('Error predicting classification')
-                                dumpSensors(temp, curr, rpm, acc1Avg, acc1Std, acc2Avg, acc2Std, 3 ) #prediction[0])
+                                dumpSensors(temp, curr, rpm, acc1Avg, acc1Std, acc2Avg, acc2Std, 0)#prediction[0])
                                 acc1Readings = []
                                 acc2Readings = []
                                 #print('Sensors dumped')
