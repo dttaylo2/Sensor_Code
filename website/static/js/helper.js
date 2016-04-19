@@ -21,28 +21,23 @@ $.ajax({
 });
 
 // Load charts
-//google.charts.load('current', {packages: ['corechart', 'line']});
-//google.charts.setOnLoadCallback(getData);
+google.charts.load('current', {packages: ['corechart', 'line']});
+google.charts.setOnLoadCallback(getData);
 
 function getData() {
-  setInterval(
-    function()
-    {
       $.ajax({
         url: '/getChartData',
         type: 'GET',
         success: function(res) {
           var dataObj = JSON.parse(res);
-//          drawTemperatureChart(dataObj);
-//          drawCurrentChart(dataObj);
+          drawTemperatureChart(dataObj);
+          drawCurrentChart(dataObj);
           drawSpeedChart(dataObj);
         },
         error: function(error) {
           console.log(error);
         }
       });
-    },
-    1000); 
 }
 
 function drawTemperatureChart(dataObj) {

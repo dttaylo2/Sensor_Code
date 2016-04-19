@@ -87,7 +87,7 @@ def getTableData():
 		cursor = conn.cursor()
 
 		#Call procedure
-		cursor.callproc('sp_getAllData', (10,))
+		cursor.callproc('sp_getAllData', (5,))
 
 		#Fetch
 		data = cursor.fetchall()
