@@ -23,11 +23,12 @@ df = pd.read_csv('test_data_041816.csv')
 X = df.iloc[:, :-1].values
 y = df.iloc[:, -1].values
 
-epochs = 10000
+epochs = 5000
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
 
 y_train_ohe = to_categorical(y_train)
+
 
 model = Sequential()
 model.add(BatchNormalization(input_shape=(X_train.shape[1],)))
@@ -44,7 +45,7 @@ model.add(Dense(output_dim=200,
 model.add(Dense(output_dim=50,
                 activation='tanh',
                 init='uniform'))
-model.add(Dropout(0.2))
+#model.add(Dropout(0.2))
 model.add(Dense(output_dim=y_train_ohe.shape[1],
                 activation='softmax',
                 init='uniform'))
