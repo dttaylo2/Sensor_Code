@@ -19,7 +19,7 @@ model.add(Dense(output_dim=500, activation='tanh', weights=modelWeights[1]))
 model.add(Dense(output_dim=350, activation='tanh', weights=modelWeights[2]))
 model.add(Dense(output_dim=200, activation='tanh', weights=modelWeights[3]))
 model.add(Dense(output_dim=50, activation='tanh', weights=modelWeights[4]))
-model.add(Dense(output_dim=y_ohe.shape[1], activation='softmax', weights=modelWeights[6]))
+model.add(Dense(output_dim=y_ohe.shape[1], activation='softmax', weights=modelWeights[5]))
 
 sgd = SGD(lr=0.01, decay=1e-6, momentum=0.95)
 model.compile(loss='categorical_crossentropy', optimizer=sgd, metrics=['accuracy'])

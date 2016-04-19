@@ -11,7 +11,7 @@ BEGIN
 		ORDER BY receivedTime DESC
 		LIMIT p_rowCount
 	) AS tmp
-	ORDER BY tmp.receivedTime;
+	ORDER BY tmp.receivedTime, tmp.id;
 END $$
 
 DELIMITER ;
