@@ -76,8 +76,6 @@ radio.startListening()
 file = open('/dev/null', 'wa')
 acc1Readings = []
 acc2Readings = []
-lastAvg = [0, 0]
-lastStd = [0, 0]
 
 # Always listening
 while 1:
@@ -92,7 +90,7 @@ while 1:
                         
                         if (str(val)[0] == '2'):
                             try:
-                                print(str(val))
+                                #print(str(val))
                                 accelerometer1 = str(val).strip().split(',')[1]
                                 accelerometer2 = str(val).strip().split(',')[2]
                                 accelerometer1 = int(accelerometer1.split('\x00')[0])
@@ -110,23 +108,28 @@ while 1:
                         elif (str(val)[0] == '1'):
                             try:
                                 vals = str(val).strip().split(',')
-                                print str(val)
-                                curr = vals[1]
-                                temp = vals[2]
-                                rpm = vals[3]
+                                curr = float(vals[1])
+                                temp = float(vals[2])
+                                rpm = float(vals[3])
                                 if len(acc1Readings) > 0 and len(acc2Readings) > 0:
                                     acc1Avg = np.average(acc1Readings)
                                     acc1Std = np.std(acc1Readings)
                                     acc2Avg = np.average(acc2Readings)
                                     acc2Std = np.std(acc2Readings)
-                                    lastAvg = [acc1Avg, acc2Avg]
-                                    lastStd = [acc1Std, acc2Std]
-                                else:
-                                    acc1Avg, acc2Avg = lastAvg[0], lastAvg[1]
-                                    acc1Std, acc2Std = lastStd[0], lastStd[1]
-                                data = np.array([curr, temp, rpm, acc1Avg, acc1Std]).reshape((1, 5))
-                                prediction = model.predict_classes(data)
-                                dumpSensors(temp, curr, rpm, acc1Avg, acc1Std, acc2Avg, acc2Std, prediction)
+                                #else:
+                                    #acc1Avg = 0
+                                    #acc1Std = 0
+                                    #acc2Avg = 0
+                                    #acc2Std = 0
+                                data = np.array([temp, curr, rpm, acc1Avg, acc1Std, acc2Avg, acc2Std]).reshape((1, 7))
+                                #print str(val)
+                                try:
+                                    prediction = model.predict_classes(data)
+                                    print(prediction)
+                                except:
+                                    prediction = 0
+                                    print('Error predicting classification')
+                                dumpSensors(temp, curr, rpm, acc1Avg, acc1Std, acc2Avg, acc2Std, prediction[0])
                                 acc1Readings = []
                                 acc2Readings = []
                                 #print('Sensors dumped')

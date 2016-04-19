@@ -21,8 +21,8 @@ $.ajax({
 });
 
 // Load charts
-google.charts.load('current', {packages: ['corechart', 'line']});
-google.charts.setOnLoadCallback(getData);
+//google.charts.load('current', {packages: ['corechart', 'line']});
+//google.charts.setOnLoadCallback(getData);
 
 function getData() {
   setInterval(
@@ -33,9 +33,9 @@ function getData() {
         type: 'GET',
         success: function(res) {
           var dataObj = JSON.parse(res);
-          drawTemperatureChart(dataObj);
-          drawCurrentChart(dataObj);
-          drawSpeedChart(dataObj);
+//          drawTemperatureChart(dataObj);
+//          drawCurrentChart(dataObj);
+//          drawSpeedChart(dataObj);
         },
         error: function(error) {
           console.log(error);
