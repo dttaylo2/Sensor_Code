@@ -87,7 +87,7 @@ def getTableData():
 		cursor = conn.cursor()
 
 		#Call procedure
-		cursor.callproc('sp_getAllData', (5,))
+		cursor.callproc('sp_getAllData', (10,))
 
 		#Fetch
 		data = cursor.fetchall()
@@ -104,7 +104,8 @@ def getTableData():
 				'Vibration1': row[5],
 				'Vibration2': row[7],
 				'Speed': row[3],
-				'Date': row[4]
+				'Date': row[4],
+                                'Classification': row[9]
 			}
 			data_dict.append(dict_item)
 

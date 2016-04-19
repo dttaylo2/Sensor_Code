@@ -35,7 +35,7 @@ function getData() {
           var dataObj = JSON.parse(res);
 //          drawTemperatureChart(dataObj);
 //          drawCurrentChart(dataObj);
-//          drawSpeedChart(dataObj);
+          drawSpeedChart(dataObj);
         },
         error: function(error) {
           console.log(error);

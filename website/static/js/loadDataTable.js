@@ -8,6 +8,8 @@ $(function() {
 			success: function(res) {
 				var dataObj = JSON.parse(res);
 
+				var classifiers = ['Not operating.', 'Operating without cutting.', 'Cutting with a sharp bit.', 'Cutting with a dull bit.', 'Bad headstock bearing.'];
+				
 				$(".tbody tr").remove(); 
 
 				$.each(dataObj, function(index, value) {
@@ -17,7 +19,8 @@ $(function() {
 						.append($('<td>').text(Math.round(value.Vibration2)))
 						.append($('<td>').text(value.Temperature))
 						.append($('<td>').text(value.Current))
-						.append($('<td>').text(value.Speed));
+						.append($('<td>').text(value.Speed))
+						.append($('<td>').text(classifiers[value.Classification]));
 
 					$('.tbody').append($tr);
 				});
